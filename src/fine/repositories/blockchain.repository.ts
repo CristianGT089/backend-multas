@@ -1,11 +1,30 @@
 import { ethers } from 'ethers';
-import FineManagementArtifact from '../../../fotomultas/artifacts/contracts/FineManagement.sol/FineManagement.json' assert { type: "json" };
+import FineManagementArtifact from '../../../../fotomultas/artifacts/contracts/FineManagement.sol/FineManagement.json' assert { type: "json" };
+import { IBlockchainRepository, IFineDetails } from './interfaces/blockchain.repository.interface.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-class BlockchainService {
-    private static instance: BlockchainService;
+// Definir el enum FineState para TypeScript
+export enum FineState {
+    PENDING = 0,
+    PAID = 1,
+    APPEALED = 2,
+    RESOLVED_APPEAL = 3,
+    CANCELLED = 4
+}
+
+// Interfaz para FineStatusUpdate
+export interface IFineStatusUpdate {
+    lastUpdatedTimestamp: string;
+    oldState: number;
+    newState: number;
+    reason: string;
+    updatedBy: string;
+}
+
+export class BlockchainRepository implements IBlockchainRepository {
+    private static instance: BlockchainRepository;
     private provider: ethers.JsonRpcProvider;
     private wallet: ethers.Wallet;
     private contract: ethers.Contract;
@@ -13,7 +32,7 @@ class BlockchainService {
 
     private constructor() {
         const RPC_URL = process.env.NODE_RPC_URL || 'http://127.0.0.1:8545';
-        const OWNER_KEY = process.env.OWNER_PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // Clave privada del owner por defecto en Hardhat
+        const OWNER_KEY = process.env.OWNER_PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
         const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 
         if (!CONTRACT_ADDRESS) {
@@ -29,37 +48,38 @@ class BlockchainService {
         this.provider = new ethers.JsonRpcProvider(RPC_URL);
         this.wallet = new ethers.Wallet(OWNER_KEY, this.provider);
         this.contract = new ethers.Contract(CONTRACT_ADDRESS, FineManagementArtifact.abi, this.wallet);
-
-        // Verificar que el contrato está correctamente inicializado
-        this.verifyContract();
     }
 
-    private async verifyContract() {
+    public static getInstance(): BlockchainRepository {
+        if (!BlockchainRepository.instance) {
+            BlockchainRepository.instance = new BlockchainRepository();
+        }
+        return BlockchainRepository.instance;
+    }
+
+    public async initialize(): Promise<void> {
+        if (this.isInitialized) return;
+        await this.verifyContract();
+        this.isInitialized = true;
+    }
+
+    public async verifyContract(): Promise<void> {
         try {
-            // Verificar que el contrato está desplegado
             const code = await this.provider.getCode(this.contract.target);
             if (code === '0x') {
                 throw new Error(`No hay contrato desplegado en la dirección ${this.contract.target}`);
             }
 
-            // Verificar que podemos llamar a una función del contrato
             const owner = await this.contract.owner();
             console.log("Verificación del contrato exitosa:", {
                 address: this.contract.target,
                 owner: owner,
-                code: code.slice(0, 66) + '...' // Solo mostramos el inicio del código
+                code: code.slice(0, 66) + '...'
             });
         } catch (error: any) {
             console.error("Error al verificar el contrato:", error);
             throw new Error(`Error al verificar el contrato: ${error.message}`);
         }
-    }
-
-    public static getInstance(): BlockchainService {
-        if (!BlockchainService.instance) {
-            BlockchainService.instance = new BlockchainService();
-        }
-        return BlockchainService.instance;
     }
 
     public async registerFine(
@@ -72,7 +92,6 @@ class BlockchainService {
         externalSystemId: string = ""
     ): Promise<{ fineId: string; transactionHash: string }> {
         try {
-            // Verificar el contrato antes de proceder
             await this.verifyContract();
 
             console.log("Iniciando registro de multa:", {
@@ -83,12 +102,6 @@ class BlockchainService {
                 cost,
                 ownerIdentifier,
                 externalSystemId
-            });
-
-            // Verificar que el contrato está correctamente configurado
-            console.log("Verificando contrato antes de la transacción:", {
-                address: this.contract.target,
-                signer: this.wallet.address
             });
 
             const tx = await this.contract.registerFine(
@@ -109,54 +122,30 @@ class BlockchainService {
             });
 
             const receipt = await tx.wait();
-            console.log("Recibo de transacción:", {
-                blockNumber: receipt.blockNumber,
-                status: receipt.status,
-                logs: receipt.logs.length,
-                logsDetails: receipt.logs.map((log: any) => ({
-                    address: log.address,
-                    topics: log.topics,
-                    data: log.data
-                }))
-            });
-
-            // Si no hay logs, intentar obtener el ID de la multa directamente
+            
             if (receipt.logs.length === 0) {
-                console.log("No se encontraron logs, intentando obtener el ID de la multa directamente...");
                 const fineCount = await this.contract.getAllFineCount();
-                console.log("Número total de multas:", fineCount.toString());
-                
-                // Asumimos que el ID de la multa es el último contador
                 const fineId = fineCount.toString();
                 
-                console.log("Multa registrada exitosamente (sin eventos):", {
-                    fineId,
-                    transactionHash: receipt.hash
-                });
-
                 return {
                     fineId,
                     transactionHash: receipt.hash
                 };
             }
 
-            // Buscar el evento FineRegistered en los logs
             const event = receipt.logs.find((log: any) => {
                 try {
                     const parsedLog = this.contract.interface.parseLog({
                         topics: log.topics,
                         data: log.data
                     });
-                    console.log("Log parseado:", parsedLog);
                     return parsedLog?.name === 'FineRegistered';
                 } catch (error) {
-                    console.log("Error al parsear log:", error);
                     return false;
                 }
             });
 
             if (!event) {
-                console.error("No se encontró el evento FineRegistered en los logs:", receipt.logs);
                 throw new Error('No se pudo encontrar el evento FineRegistered en la transacción');
             }
 
@@ -166,16 +155,10 @@ class BlockchainService {
             });
 
             if (!parsedLog) {
-                console.error("No se pudo parsear el log del evento");
                 throw new Error('Error al parsear el log del evento FineRegistered');
             }
 
             const fineId = parsedLog.args[0].toString();
-
-            console.log("Multa registrada exitosamente:", {
-                fineId,
-                transactionHash: receipt.hash
-            });
 
             return {
                 fineId,
@@ -202,7 +185,7 @@ class BlockchainService {
         }
     }
 
-    public async getFineDetails(fineId: number): Promise<any> {
+    public async getFineDetails(fineId: number): Promise<IFineDetails> {
         try {
             const fine = await this.contract.getFineDetails(fineId);
             return {
@@ -225,7 +208,7 @@ class BlockchainService {
         }
     }
 
-    public async getFinesDetails(): Promise<any[]> {
+    public async getFinesDetails(): Promise<IFineDetails[]> {
         try {
             const fines = await this.contract.getFinesDetails();
             return fines.map((fine: any) => ({
@@ -251,6 +234,7 @@ class BlockchainService {
     public async getFinesByPlate(plateNumber: string): Promise<string[]> {
         try {
             const fineIds = await this.contract.getFinesByPlate(plateNumber);
+            console.log("Fines encontradas por placa:", fineIds.map((id: bigint) => id.toString()));
             return fineIds.map((id: bigint) => id.toString());
         } catch (error) {
             console.error("Error fetching fines by plate:", error);
@@ -262,7 +246,7 @@ class BlockchainService {
         try {
             const tx = await this.contract.updateFineStatus(
                 fineId,
-                0, // PENDING state
+                0,
                 `Linked to SIMIT: ${simitId}`
             );
             const receipt = await tx.wait();
@@ -273,67 +257,175 @@ class BlockchainService {
         }
     }
 
-    public async verifyBlockchainIntegrity(fineId: number): Promise<boolean> {
+    public async verifyBlockchainIntegrity(fineId: number): Promise<{ 
+        isIntegrityValid: boolean; 
+        details: {
+            registrationBlock: number;
+            registrationTimestamp: number;
+            statusHistoryLength: number;
+            lastStatusUpdate: number;
+            verificationDetails: string[];
+        }
+    }> {
         try {
-            // Obtener los detalles de la multa
+            // 1. Obtener detalles de la multa
             const fine = await this.contract.getFineDetails(fineId);
+            if (!fine || fine.id.toString() === '0') {
+                throw new Error('Multa no encontrada');
+            }
+
+            // 2. Obtener detalles de registro
+            const registrationDetails = await this.contract.getFineRegistrationDetails(fineId);
             
-            // Obtener el bloque donde se registró la multa
-            const tx = await this.provider.getTransaction(fine.registeredBy);
-            if (!tx || !tx.blockNumber) {
-                throw new Error('No se encontró la transacción de registro');
-            }
-
-            // Obtener el bloque
-            const block = await this.provider.getBlock(tx.blockNumber);
-            if (!block) {
-                throw new Error('No se encontró el bloque');
-            }
-
-            // Verificar que el hash del bloque coincide con el hash calculado
-            const calculatedHash = block.hash;
-            const storedHash = await this.provider.getBlock(tx.blockNumber);
+            // 3. Obtener el historial de estados (primera página)
+            const [statusHistory, totalUpdates] = await this.contract.getFineStatusHistory(fineId, 1, 1);
             
-            // Verificar que el hash del bloque no ha sido alterado
-            if (calculatedHash !== storedHash?.hash) {
-                console.error('Integridad comprometida: El hash del bloque ha sido alterado');
-                return false;
+            // 4. Verificar la secuencia de estados
+            const verificationDetails: string[] = [];
+            
+            // Verificar que el estado actual coincida con el último estado del historial
+            if (statusHistory.length > 0) {
+                const lastStatus = statusHistory[0];
+                if (lastStatus.newState !== fine.currentState) {
+                    verificationDetails.push('El estado actual no coincide con el último estado del historial');
+                }
             }
 
-            // Verificar que la transacción está incluida en el bloque
-            const txInBlock = await this.provider.getTransaction(tx.hash);
-            if (!txInBlock || txInBlock.blockNumber !== block.number) {
-                console.error('Integridad comprometida: La transacción no está en el bloque esperado');
-                return false;
+            // Verificar que el timestamp de registro sea válido
+            if (registrationDetails.timestamp.toString() === '0') {
+                verificationDetails.push('Timestamp de registro inválido');
             }
 
-            console.log('Verificación de integridad exitosa para la multa:', fineId);
-            return true;
-        } catch (error) {
+            // Verificar que el historial de estados sea consistente
+            if (totalUpdates.toString() === '0' && fine.currentState !== 0) { // 0 = PENDING
+                verificationDetails.push('La multa tiene un estado pero no tiene historial de estados');
+            }
+
+            // Si hay detalles de verificación, la integridad no es válida
+            const isIntegrityValid = verificationDetails.length === 0;
+
+            return {
+                isIntegrityValid,
+                details: {
+                    registrationBlock: Number(registrationDetails.blockNumber),
+                    registrationTimestamp: Number(registrationDetails.timestamp),
+                    statusHistoryLength: Number(totalUpdates),
+                    lastStatusUpdate: statusHistory.length > 0 ? 
+                        Number(statusHistory[0].lastUpdatedTimestamp) : 0,
+                    verificationDetails: isIntegrityValid ? 
+                        ['Todas las verificaciones de integridad pasaron exitosamente'] : 
+                        verificationDetails
+                }
+            };
+
+        } catch (error: any) {
             console.error('Error al verificar la integridad de la blockchain:', error);
-            return false;
+            return {
+                isIntegrityValid: false,
+                details: {
+                    registrationBlock: 0,
+                    registrationTimestamp: 0,
+                    statusHistoryLength: 0,
+                    lastStatusUpdate: 0,
+                    verificationDetails: [`Error en la verificación: ${error.message}`]
+                }
+            };
         }
     }
-    
-    public getFineStatusHistoryFromBlockchain(arg0: number) {
-        throw new Error('Function not implemented.');
+
+    /**
+     * Obtiene el historial de estados de una multa de forma paginada.
+     * @param fineId ID de la multa
+     * @param page Número de página (comienza en 1)
+     * @param pageSize Tamaño de la página
+     * @returns Objeto con el historial de estados y el total de actualizaciones
+     */
+    public async getFineStatusHistory(
+        fineId: number,
+        page: number = 1,
+        pageSize: number = 10
+    ): Promise<{ updates: IFineStatusUpdate[]; totalUpdates: number }> {
+        try {
+            console.log("Obteniendo historial de estados:", {
+                fineId,
+                page,
+                pageSize
+            });
+
+            // Verificar que el contrato esté inicializado
+            await this.verifyContract();
+
+            // Obtener la interfaz del contrato
+            const contractInterface = this.contract.interface;
+            
+            // Crear la llamada a la función
+            const data = contractInterface.encodeFunctionData("getFineStatusHistory", [
+                fineId,
+                page,
+                pageSize
+            ]);
+
+            // Realizar la llamada al contrato
+            const result = await this.provider.call({
+                to: this.contract.target,
+                data: data
+            });
+
+            // Decodificar el resultado
+            const decodedResult = contractInterface.decodeFunctionResult(
+                "getFineStatusHistory",
+                result
+            );
+
+            const [updates, totalUpdates] = decodedResult;
+
+            console.log("Respuesta del contrato:", {
+                updatesLength: updates.length,
+                totalUpdates: totalUpdates.toString()
+            });
+
+            // Convertir los resultados al formato esperado
+            const formattedUpdates = updates.map((update: {
+                lastUpdatedTimestamp: bigint;
+                oldState: bigint;
+                newState: bigint;
+                reason: string;
+                updatedBy: string;
+            }) => ({
+                lastUpdatedTimestamp: update.lastUpdatedTimestamp.toString(),
+                oldState: Number(update.oldState),
+                newState: Number(update.newState),
+                reason: update.reason,
+                updatedBy: update.updatedBy
+            }));
+
+            return {
+                updates: formattedUpdates,
+                totalUpdates: Number(totalUpdates)
+            };
+        } catch (error: any) {
+            console.error("Error al obtener el historial de estados:", error);
+            if (error.code === 'UNSUPPORTED_OPERATION') {
+                console.error("Detalles del error:", {
+                    operation: error.operation,
+                    info: error.info,
+                    contractAddress: this.contract.target,
+                    abi: this.contract.interface.format()
+                });
+            }
+            throw new Error(`Error al obtener el historial de estados: ${error.message}`);
+        }
     }
-}
 
-// Exportar una instancia única del servicio
-export const blockchainService = BlockchainService.getInstance();
+    public getContract(): ethers.Contract {
+        return this.contract;
+    }
 
-// Enumeración para los estados de las multas en la blockchain
-const FineStatusBlockchain = {
-    PENDING: 0,
-    PAID: 1,
-    CANCELLED: 2,
-    DISPUTED: 3,
-} as const;
+    public getProvider(): ethers.JsonRpcProvider {
+        return this.provider;
+    }
 
-export { FineStatusBlockchain };
-
-// Exporta el tipo de los valores de FineStatusBlockchain
-export type FineStatus = typeof FineStatusBlockchain[keyof typeof FineStatusBlockchain];
-
-
+    public getWallet(): ethers.Wallet {
+        return this.wallet;
+    }
+} 

@@ -1,11 +1,11 @@
 import express from 'express';
 import multer from 'multer';
 import swaggerUi from 'swagger-ui-express';
-import { ipfsService } from './services/ipfs.service.js';
-import { blockchainService } from './services/blockchain.service.js';
+import { ipfsService } from './fine/services/ipfs.service.js';
+import { blockchainService } from './fine/services/blockchain.service.js';
 import type { Request, Response, NextFunction } from 'express';
-import fineRoutes from './routes/fine.routes.js';
-import { globalErrorHandler, AppError } from './utils/errorHandler.js';
+import fineRoutes from './fine/routes/fine.routes.js';
+import { globalErrorHandler, AppError } from './fine/utils/errorHandler.js';
 import { specs } from './config/swagger.js';
 
 const app = express();

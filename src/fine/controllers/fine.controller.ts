@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { ipfsService } from '../services/ipfs.service.js';
-import { blockchainService } from '../services/blockchain.service.js';
-import { apitudeService } from '../services/apitude.service.js';
-import { FineStatusBlockchain } from '../services/blockchain.service.js';
-import { ImportFromApitudeDto, RegisterFineDto, UpdateFineStatusDto } from '../interfaces/index.js';
+import { ipfsService } from '../../fine/services/ipfs.service.js';
+import { blockchainService } from '../../fine/services/blockchain.service.js';
+import { apitudeService } from '../../fine/services/apitude.service.js';
+import { BlockchainFineStatus, ImportFromApitudeDto, RegisterFineDto, UpdateFineStatusDto } from '../../fine/interfaces/index.js';
 
 /**
  * Registra una multa en la blockchain y sube la evidencia a IPFS.
@@ -54,21 +53,20 @@ export const updateFineStatus = async (req: Request, res: Response, next: NextFu
         const { fineId } = req.params;
         const { newState, reason } = req.body as UpdateFineStatusDto;
 
-        // Validate required data
+        // Validar datos requeridos
         if (!fineId || newState === undefined || !reason) {
             return res.status(400).json({ message: "Fine ID, new state, and reason are required." });
         }
 
-        // Ensure newState is a valid FineStatus
-        const statusEnumValue = FineStatusBlockchain[newState as unknown as keyof typeof FineStatusBlockchain];
-        if (statusEnumValue === undefined) {
+        // Validar que el estado proporcionado sea válido
+        if (!Object.values(BlockchainFineStatus).includes(newState)) {
             return res.status(400).json({ message: "Invalid status provided." });
         }
 
-        // Update the fine status on the blockchain
+        // Actualizar el estado de la multa en la blockchain
         const transactionHash = await blockchainService.updateFineStatus(
             parseInt(fineId, 10),
-            statusEnumValue,
+            newState,
             reason
         );
 
@@ -107,10 +105,26 @@ export const getFine = async (req: Request, res: Response, next: NextFunction) =
  * Obtiene los detalles de todas las multas desde la blockchain.
  */
 export const getFines = async (req: Request, res: Response, next: NextFunction) => {
-    
     try {
-        const fines = await blockchainService.getFinesDetails();
-        res.status(200).json(fines);
+        const page = parseInt(req.query.page as string) || 1;
+        const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+        // Validar parámetros de paginación
+        if (page < 1 || pageSize < 1) {
+            return res.status(400).json({ 
+                message: "Invalid pagination parameters. Page and pageSize must be greater than 0." 
+            });
+        }
+
+        const fines = await blockchainService.getFinesDetails(page, pageSize);
+        res.status(200).json({
+            message: 'Fines retrieved successfully.',
+            data: fines,
+            pagination: {
+                page,
+                pageSize
+            }
+        });
     } catch (error: any) {
         console.error("Error in getFines controller:", error);
         res.status(500).json({ message: 'Error retrieving fines.', error: error.message });
@@ -123,8 +137,6 @@ export const getFines = async (req: Request, res: Response, next: NextFunction) 
 export const getFineEvidence = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { evidenceCID } = req.params;
-        
-        console.log("evidenceCID: ",evidenceCID);
 
         // Validar datos requeridos
         if (!evidenceCID) {
@@ -187,9 +199,29 @@ export const getFineEvidence = async (req: Request, res: Response, next: NextFun
  * Verifica la integridad de la blockchain.
  */
 export const verifyBlockchainIntegrity = async (req: Request, res: Response, next: NextFunction) => {
-    const { fineId } = req.params;
-    const integrity = await blockchainService.verifyBlockchainIntegrity(parseInt(fineId, 10));
-    res.status(200).json({ integrity });
+    try {
+        const { fineId } = req.params;
+        if (!fineId) {
+            return res.status(400).json({ message: "Fine ID is required." });
+        }
+
+        const integrityResult = await blockchainService.verifyBlockchainIntegrity(parseInt(fineId, 10));
+        
+        console.log("Integrity result:", integrityResult);
+
+        res.status(200).json({
+            message: integrityResult.isIntegrityValid ? 
+                'Blockchain integrity verified successfully.' : 
+                'Blockchain integrity verification failed.',
+            ...integrityResult
+        });
+    } catch (error: any) {
+        console.error("Error in verifyBlockchainIntegrity controller:", error);
+        res.status(500).json({ 
+            message: 'Error verifying blockchain integrity.', 
+            error: error.message 
+        });
+    }
 };
 
 /**
@@ -227,7 +259,7 @@ export const linkFineToSIMIT = async (req: Request, res: Response, next: NextFun
 /**
  * Obtiene los detalles del vehiculo por SIMIT.
  */
-export const getVehicleDetailsFromSIMIT = async (req: Request, res: Response, next: NextFunction) => {
+export const getVehicleInfo = async (req: Request, res: Response, next: NextFunction) => {
     const { plateNumber } = req.params;
     const simitData = await apitudeService.fetchFineFromApitude(plateNumber, new Date().toISOString().split('T')[0]);
     res.status(200).json(simitData);
@@ -263,13 +295,33 @@ export const importFromApitudeAndRegister = async (
  * Obtiene multas por número de placa.
  */
 export const getFinesByPlate = async (req: Request, res: Response) => {
-    const { plateNumber } = req.params;
+    try {
+        const { plateNumber } = req.params;
 
-    // Placeholder logic for fetching fines by plate number
-    res.status(200).json({
-        message: `Fines for plate number ${plateNumber} retrieved successfully`,
-        data: [], // Replace with actual data
-    });
+        // Validar datos requeridos
+        if (!plateNumber) {
+            return res.status(400).json({ message: "Plate number is required." });
+        }
+
+        // Obtener IDs de multas desde la blockchain
+        const fineIds = await blockchainService.getFinesByPlate(plateNumber);
+        console.log("IDs de multas encontradas:", fineIds);
+        // Obtener detalles de cada multa
+        const finesDetails = await Promise.all(
+            fineIds.map(id => blockchainService.getFineDetails(parseInt(id, 10)))
+        );
+        console.log("Detalles de multas encontradas:", finesDetails);
+        res.status(200).json({
+            message: `Fines for plate number ${plateNumber} retrieved successfully`,
+            data: finesDetails
+        });
+    } catch (error: any) {
+        console.error("Error in getFinesByPlate controller:", error);
+        res.status(500).json({ 
+            message: 'Error retrieving fines by plate.', 
+            error: error.message 
+        });
+    }
 };
 
 /**
@@ -287,6 +339,8 @@ export const getFineStatusHistory = async (req: Request, res: Response, next: Ne
         // Obtener historial de estados desde la blockchain
         const statusHistory = await blockchainService.getFineStatusHistoryFromBlockchain(parseInt(fineId, 10));
 
+        console.log("Status history:", statusHistory);
+        
         res.status(200).json({
             message: 'Fine status history retrieved successfully.',
             data: statusHistory,
