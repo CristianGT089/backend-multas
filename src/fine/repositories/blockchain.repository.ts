@@ -326,17 +326,39 @@ export class BlockchainRepository implements IBlockchainRepository {
             // 2. Obtener detalles de registro
             const registrationDetails = await this.contract.getFineRegistrationDetails(fineId);
             
-            // 3. Obtener el historial de estados (primera página)
-            const [statusHistory, totalUpdates] = await this.contract.getFineStatusHistory(fineId, 1, 1);
+            // 3. Obtener primero el total de actualizaciones
+            const [initialHistory, totalUpdates] = await this.contract.getFineStatusHistory(fineId, 1, 1);
             
-            // 4. Verificar la secuencia de estados
+            // 4. Obtener el historial completo
+            const [statusHistory] = await this.contract.getFineStatusHistory(fineId, 1, Number(totalUpdates));
+            
+            // 5. Verificar la secuencia de estados
             const verificationDetails: string[] = [];
             
             // Verificar que el estado actual coincida con el último estado del historial
             if (statusHistory.length > 0) {
-                const lastStatus = statusHistory[0];
-                if (lastStatus.newState !== fine.currentState) {
-                    verificationDetails.push('El estado actual no coincide con el último estado del historial');
+                // Ordenar el historial por lastUpdatedTimestamp de forma descendente para obtener el más reciente
+                const sortedHistory = [...statusHistory].sort((a, b) => 
+                    Number(b.lastUpdatedTimestamp) - Number(a.lastUpdatedTimestamp)
+                );
+                const lastStatus = sortedHistory[0];
+                
+                console.log("Estado actual vs último estado:", {
+                    currentState: Number(fine.currentState),
+                    lastHistoryState: Number(lastStatus.newState),
+                    historyLength: statusHistory.length,
+                    lastUpdateTimestamp: Number(lastStatus.lastUpdatedTimestamp),
+                    allStates: sortedHistory.map(s => ({
+                        state: Number(s.newState),
+                        timestamp: Number(s.lastUpdatedTimestamp)
+                    }))
+                });
+                
+                if (Number(lastStatus.newState) !== Number(fine.currentState)) {
+                    verificationDetails.push(
+                        `El estado actual (${fine.currentState}) no coincide con el último estado del historial (${lastStatus.newState}). ` +
+                        `Último timestamp: ${new Date(Number(lastStatus.lastUpdatedTimestamp) * 1000).toISOString()}`
+                    );
                 }
             }
 
@@ -360,7 +382,7 @@ export class BlockchainRepository implements IBlockchainRepository {
                     registrationTimestamp: Number(registrationDetails.timestamp),
                     statusHistoryLength: Number(totalUpdates),
                     lastStatusUpdate: statusHistory.length > 0 ? 
-                        Number(statusHistory[0].lastUpdatedTimestamp) : 0,
+                        Number(statusHistory[statusHistory.length - 1].lastUpdatedTimestamp) : 0,
                     verificationDetails: isIntegrityValid ? 
                         ['Todas las verificaciones de integridad pasaron exitosamente'] : 
                         verificationDetails
