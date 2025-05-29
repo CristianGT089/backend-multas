@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ipfsService } from '../../fine/services/ipfs.service.js';
 import { blockchainService } from '../../fine/services/blockchain.service.js';
 import { apitudeService } from '../../fine/services/apitude.service.js';
-import { BlockchainFineStatus, ImportFromApitudeDto, RegisterFineDto, UpdateFineStatusDto } from '../../fine/interfaces/index.js';
+import { BlockchainFineStatus, ImportFromApitudeDto, RegisterFineDto, UpdateFineStatusDto, BlockchainFineData } from '../../fine/interfaces/index.js';
 
 /**
  * Registra una multa en la blockchain y sube la evidencia a IPFS.
@@ -92,12 +92,42 @@ export const getFine = async (req: Request, res: Response, next: NextFunction) =
             return res.status(400).json({ message: "Fine ID is required." });
         }
 
+        // Convertir y validar el ID
+        const numericFineId = parseInt(fineId, 10);
+        if (isNaN(numericFineId) || numericFineId <= 0) {
+            return res.status(400).json({ 
+                message: "Invalid fine ID. Must be a positive number.",
+                providedId: fineId
+            });
+        }
+
+        console.log("Buscando multa con ID:", numericFineId);
+
         // Obtener detalles de la multa desde la blockchain
-        const fineDetails = await blockchainService.getFineDetails(parseInt(fineId, 10));
+        const fineDetails = await blockchainService.getFineDetails(numericFineId);
         res.status(200).json(fineDetails);
     } catch (error: any) {
         console.error("Error in getFine controller:", error);
-        res.status(500).json({ message: 'Error retrieving fine.', error: error.message });
+        
+        // Manejar diferentes tipos de errores
+        if (error.message.includes('does not exist')) {
+            return res.status(404).json({ 
+                message: 'Fine not found',
+                error: error.message 
+            });
+        }
+        
+        if (error.message.includes('Invalid fine ID')) {
+            return res.status(400).json({ 
+                message: 'Invalid fine ID',
+                error: error.message 
+            });
+        }
+
+        res.status(500).json({ 
+            message: 'Error retrieving fine',
+            error: error.message 
+        });
     }
 };
 
@@ -207,17 +237,24 @@ export const verifyBlockchainIntegrity = async (req: Request, res: Response, nex
 
         const integrityResult = await blockchainService.verifyBlockchainIntegrity(parseInt(fineId, 10));
         
-        console.log("Integrity result:", integrityResult);
-
         res.status(200).json({
+            success: true,
             message: integrityResult.isIntegrityValid ? 
                 'Blockchain integrity verified successfully.' : 
                 'Blockchain integrity verification failed.',
-            ...integrityResult
+            data: {
+                isValid: integrityResult.isIntegrityValid,
+                registrationBlock: integrityResult.details.registrationBlock,
+                registrationTimestamp: integrityResult.details.registrationTimestamp,
+                statusHistoryLength: integrityResult.details.statusHistoryLength,
+                lastStatusUpdate: integrityResult.details.lastStatusUpdate,
+                verificationDetails: integrityResult.details.verificationDetails
+            }
         });
     } catch (error: any) {
         console.error("Error in verifyBlockchainIntegrity controller:", error);
         res.status(500).json({ 
+            success: false,
             message: 'Error verifying blockchain integrity.', 
             error: error.message 
         });
@@ -348,6 +385,86 @@ export const getFineStatusHistory = async (req: Request, res: Response, next: Ne
     } catch (error: any) {
         console.error("Error in getFineStatusHistory controller:", error);
         res.status(500).json({ message: 'Error retrieving fine status history.', error: error.message });
+    }
+};
+
+/**
+ * Obtiene el histórico de las 10 multas más recientes
+ */
+export const getRecentFinesHistory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // Primero verificar si hay multas en el sistema
+        const totalFines = await blockchainService.getTotalFines();
+        
+        if (totalFines === 0) {
+            return res.status(200).json({
+                success: true,
+                message: 'No fines found in the system',
+                data: []
+            });
+        }
+
+        // Obtener todas las multas
+        const fines = await blockchainService.getFinesDetails(1, Number(totalFines));
+        
+        // Array para almacenar todos los cambios de estado
+        let allStatusChanges = [];
+
+        // Obtener el historial de estados para cada multa
+        for (const fine of fines) {
+            // Obtener el historial de estados de la multa
+            const statusHistory = await blockchainService.getFineStatusHistoryFromBlockchain(
+                Number(fine.id)
+            );
+
+            // Agregar cada cambio de estado al array
+            statusHistory.forEach(change => {
+                allStatusChanges.push({
+                    fineId: fine.id,
+                    plateNumber: fine.plateNumber,
+                    status: change.state,
+                    reason: change.reason,
+                    timestamp: change.timestamp
+                });
+            });
+
+            // Agregar el estado inicial (creación de la multa)
+            allStatusChanges.push({
+                fineId: fine.id,
+                plateNumber: fine.plateNumber,
+                status: 0, // Estado PENDING
+                reason: `Multa registrada por ${fine.infractionType} en ${fine.location}`,
+                timestamp: fine.timestamp
+            });
+        }
+
+        // Ordenar todos los cambios por timestamp (más reciente primero)
+        allStatusChanges.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
+
+        // Tomar los 10 más recientes
+        const recentChanges = allStatusChanges.slice(0, 10);
+
+        // Formatear la respuesta
+        const formattedHistory = recentChanges.map(change => ({
+            status: Number(change.status),
+            reason: change.reason,
+            fineId: change.fineId,
+            plateNumber: change.plateNumber,
+            timestamp: new Date(Number(change.timestamp) * 1000).toISOString()
+        }));
+
+        res.status(200).json({
+            success: true,
+            message: 'Recent fines history retrieved successfully',
+            data: formattedHistory
+        });
+    } catch (error: any) {
+        console.error("Error in getRecentFinesHistory controller:", error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error retrieving recent fines history',
+            error: error.message 
+        });
     }
 };
 

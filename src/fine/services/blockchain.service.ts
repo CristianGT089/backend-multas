@@ -102,6 +102,17 @@ class BlockchainService {
             throw new Error('Error al obtener el historial de estados de la multa');
         }
     }
+
+    public async getTotalFines(): Promise<number> {
+        try {
+            const contract = this.repository.getContract();
+            const totalFines = await contract.getAllFineCount();
+            return Number(totalFines);
+        } catch (error) {
+            console.error("Error al obtener el total de multas:", error);
+            throw new Error('Error al obtener el total de multas');
+        }
+    }
 }
 
 // Exportar una instancia única del servicio

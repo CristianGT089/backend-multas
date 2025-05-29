@@ -187,7 +187,32 @@ export class BlockchainRepository implements IBlockchainRepository {
 
     public async getFineDetails(fineId: number): Promise<IFineDetails> {
         try {
-            const fine = await this.contract.getFineDetails(fineId);
+            console.log("Obteniendo detalles de la multa:", { fineId, type: typeof fineId });
+
+            // Validar que el ID sea un número válido
+            if (isNaN(fineId) || fineId <= 0) {
+                throw new Error(`Invalid fine ID: ${fineId}`);
+            }
+
+            // Verificar que el ID no sea mayor que el total de multas
+            const totalFines = await this.contract.getAllFineCount();
+            console.log("Total de multas en el sistema:", totalFines.toString());
+            
+            if (fineId > Number(totalFines)) {
+                throw new Error(`Fine ID ${fineId} does not exist. Total fines: ${totalFines}`);
+            }
+
+            // Convertir el ID a BigInt para asegurar compatibilidad con el contrato
+            const bigIntFineId = BigInt(fineId);
+            console.log("Llamando al contrato con ID:", bigIntFineId.toString());
+
+            const fine = await this.contract.getFineDetails(bigIntFineId);
+            console.log("Respuesta del contrato:", fine);
+
+            if (!fine || !fine.id) {
+                throw new Error(`Fine with ID ${fineId} not found`);
+            }
+
             return {
                 id: fine.id.toString(),
                 plateNumber: fine.plateNumber,
@@ -200,31 +225,55 @@ export class BlockchainRepository implements IBlockchainRepository {
                 currentState: fine.currentState.toString(),
                 registeredBy: fine.registeredBy,
                 externalSystemId: fine.externalSystemId,
-                hashImageIPFS: fine.hashImageIPFS
+                hashImageIPFS: fine.evidenceCID
             };
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error fetching fine details from blockchain:", error);
-            throw new Error('Failed to fetch fine details from blockchain');
+            throw new Error(`Failed to fetch fine details from blockchain: ${error.message}`);
         }
     }
 
-    public async getFinesDetails(): Promise<IFineDetails[]> {
+    public async getFinesDetails(page: number = 1, pageSize: number = 10): Promise<IFineDetails[]> {
         try {
-            const fines = await this.contract.getFinesDetails();
-            return fines.map((fine: any) => ({
-                id: fine.id.toString(),
-                plateNumber: fine.plateNumber,
-                evidenceCID: fine.evidenceCID,
-                location: fine.location,
-                timestamp: fine.timestamp.toString(),
-                infractionType: fine.infractionType,
-                cost: fine.cost.toString(),
-                ownerIdentifier: fine.ownerIdentifier,
-                currentState: fine.currentState.toString(),
-                registeredBy: fine.registeredBy,
-                externalSystemId: fine.externalSystemId,
-                hashImageIPFS: fine.hashImageIPFS
-            }));
+            // Validar parámetros de paginación
+            if (page < 1 || pageSize < 1) {
+                throw new Error('Invalid pagination parameters');
+            }
+
+            // Obtener el total de multas primero
+            const totalFines = await this.contract.getAllFineCount();
+            console.log("Total de multas en el sistema:", totalFines.toString());
+            
+            // Si no hay multas, retornar array vacío
+            if (totalFines.toString() === '0') {
+                return [];
+            }
+
+            // Ajustar el tamaño de página si es necesario
+            const adjustedPageSize = Math.min(pageSize, Number(totalFines));
+            console.log("Tamaño de página ajustado:", adjustedPageSize);
+
+            // Obtener las multas paginadas
+            const fines = await this.contract.getPaginatedFines(page, adjustedPageSize);
+            console.log("Multas obtenidas:", fines.length);
+            
+            // Mapear los resultados, filtrando cualquier resultado nulo o indefinido
+            return fines
+                .filter((fine: any) => fine && fine.id) // Asegurarse de que la multa es válida
+                .map((fine: any) => ({
+                    id: fine.id.toString(),
+                    plateNumber: fine.plateNumber,
+                    evidenceCID: fine.evidenceCID,
+                    location: fine.location,
+                    timestamp: fine.timestamp.toString(),
+                    infractionType: fine.infractionType,
+                    cost: fine.cost.toString(),
+                    ownerIdentifier: fine.ownerIdentifier,
+                    currentState: fine.currentState.toString(),
+                    registeredBy: fine.registeredBy,
+                    externalSystemId: fine.externalSystemId,
+                    hashImageIPFS: fine.evidenceCID
+                }));
         } catch (error) {
             console.error("Error fetching fines details from blockchain:", error);
             throw new Error('Failed to fetch fines details from blockchain');

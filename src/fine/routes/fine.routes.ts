@@ -10,6 +10,59 @@ const upload = multer({ storage: storage });
 /**
  * @swagger
  * /api/fines:
+ *   get:
+ *     summary: Obtener todas las multas
+ *     tags: [Multas]
+ *     responses:
+ *       200:
+ *         description: Lista de multas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Fine'
+ *       500:
+ *         description: Error del servidor
+ */
+router.get('/', asyncHandler(fineController.getFines));
+
+/**
+ * @swagger
+ * /api/fines/recent-history:
+ *   get:
+ *     summary: Obtener el histórico de los 10 cambios de estado más recientes de todas las multas
+ *     tags: [Multas]
+ *     responses:
+ *       200:
+ *         description: Lista de los cambios de estado más recientes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indica si la operación fue exitosa
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje descriptivo del resultado
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/FineStatusHistory'
+ *       500:
+ *         description: Error del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/recent-history', asyncHandler(fineController.getRecentFinesHistory));
+
+/**
+ * @swagger
+ * /api/fines:
  *   post:
  *     summary: Registrar una nueva multa
  *     tags: [Multas]
@@ -50,7 +103,6 @@ const upload = multer({ storage: storage });
  */
 router.post('/', upload.single('evidenceFile'), asyncHandler(fineController.registerFine));
 
-
 /**
  * @swagger
  * /api/fines/{fineId}:
@@ -76,26 +128,6 @@ router.post('/', upload.single('evidenceFile'), asyncHandler(fineController.regi
  *         description: Error del servidor
  */
 router.get('/:fineId', asyncHandler(fineController.getFine));
-
-/**
- * @swagger
- * /api/fines:
- *   get:
- *     summary: Obtener todas las multas
- *     tags: [Multas]
- *     responses:
- *       200:
- *         description: Lista de multas
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Fine'
- *       500:
- *         description: Error del servidor
- */
-router.get('/', asyncHandler(fineController.getFines));
 
 /**
  * @swagger
@@ -133,7 +165,6 @@ router.get('/', asyncHandler(fineController.getFines));
  */
 router.put('/:fineId/status', asyncHandler(fineController.updateFineStatus));
 
-
 /**
  * @swagger
  * /api/fines/{fineId}/integrity:
@@ -143,6 +174,65 @@ router.put('/:fineId/status', asyncHandler(fineController.updateFineStatus));
  *     parameters:
  *       - in: path
  *         name: fineId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la multa a verificar
+ *     responses:
+ *       200:
+ *         description: Verificación de integridad exitosa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indica si la operación fue exitosa
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje descriptivo del resultado
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     isValid:
+ *                       type: boolean
+ *                       description: Indica si la integridad es válida
+ *                     registrationBlock:
+ *                       type: number
+ *                       description: Número del bloque de registro
+ *                     registrationTimestamp:
+ *                       type: number
+ *                       description: Timestamp del registro
+ *                     statusHistoryLength:
+ *                       type: number
+ *                       description: Longitud del historial de estados
+ *                     lastStatusUpdate:
+ *                       type: number
+ *                       description: Timestamp de la última actualización
+ *                     verificationDetails:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       description: Detalles de la verificación
+ *       400:
+ *         description: ID de multa no proporcionado
+ *       500:
+ *         description: Error del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: false en caso de error
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de error
+ *                 error:
+ *                   type: string
+ *                   description: Detalles del error
  */
 router.get('/:fineId/integrity', asyncHandler(fineController.verifyBlockchainIntegrity));
 
