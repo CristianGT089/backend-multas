@@ -1,4 +1,4 @@
-export interface RegisterFineDto {
+export interface FineData {
     plateNumber: string;
     location: string;
     infractionType: string;

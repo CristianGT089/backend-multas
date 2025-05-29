@@ -1,43 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
-import { ipfsService } from '../../fine/services/ipfs.service.js';
-import { blockchainService } from '../../fine/services/blockchain.service.js';
-import { apitudeService } from '../../fine/services/apitude.service.js';
-import { BlockchainFineStatus, ImportFromApitudeDto, RegisterFineDto, UpdateFineStatusDto, BlockchainFineData } from '../../fine/interfaces/index.js';
+import { fineService } from '../services/fine.service.js';
+import { FineStateInternal } from '../interfaces/index.js';
 
 /**
- * Registra una multa en la blockchain y sube la evidencia a IPFS.
+ * Registra una multa en la blockBlockchainFineStatuschain y sube la evidencia a IPFS.
  */
 export const registerFine = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { plateNumber, location, infractionType, cost, ownerIdentifier, externalSystemId } = req.body as RegisterFineDto;
-
         // Validar datos requeridos
         if (!req.file) {
             return res.status(400).json({ message: "Evidence file is required." });
         }
-        if (!plateNumber || !location || !infractionType || cost === undefined || !ownerIdentifier) {
+        if (!req.body.plateNumber || !req.body.location || !req.body.infractionType || req.body.cost === undefined || !req.body.ownerIdentifier) {
             return res.status(400).json({ message: "Missing required fine details." });
         }
 
-        // Subir evidencia a IPFS
-        const evidenceCID = await ipfsService.uploadToIPFS(req.file.buffer, req.file.originalname);
-
-        // Registrar multa en la blockchain
-        const result = await blockchainService.registerFine(
-            plateNumber,
-            evidenceCID,
-            location,
-            infractionType,
-            cost,
-            ownerIdentifier,
-            externalSystemId    
-        );
+        const result = await fineService.registerFine(req.file, req.body);
 
         res.status(201).json({
             message: 'Fine registered successfully.',
-            fineId: result.fineId,
-            ipfsHash: evidenceCID,
-            transactionHash: result.transactionHash,
+            ...result
         });
     } catch (error: any) {
         console.error("Error in registerFine controller:", error);
@@ -51,7 +33,7 @@ export const registerFine = async (req: Request, res: Response, next: NextFuncti
 export const updateFineStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { fineId } = req.params;
-        const { newState, reason } = req.body as UpdateFineStatusDto;
+        const { newState, reason } = req.body;
 
         // Validar datos requeridos
         if (!fineId || newState === undefined || !reason) {
@@ -59,20 +41,15 @@ export const updateFineStatus = async (req: Request, res: Response, next: NextFu
         }
 
         // Validar que el estado proporcionado sea válido
-        if (!Object.values(BlockchainFineStatus).includes(newState)) {
+        if (!Object.values(FineStateInternal).includes(newState)) {
             return res.status(400).json({ message: "Invalid status provided." });
         }
 
-        // Actualizar el estado de la multa en la blockchain
-        const transactionHash = await blockchainService.updateFineStatus(
-            parseInt(fineId, 10),
-            newState,
-            reason
-        );
-
+        const result = await fineService.updateFineStatus(parseInt(fineId, 10), newState, reason);
+        
         res.status(200).json({
             message: 'Fine status updated successfully.',
-            transactionHash,
+            ...result
         });
     } catch (error: any) {
         console.error("Error in updateFineStatus controller:", error);
@@ -101,15 +78,11 @@ export const getFine = async (req: Request, res: Response, next: NextFunction) =
             });
         }
 
-        console.log("Buscando multa con ID:", numericFineId);
-
-        // Obtener detalles de la multa desde la blockchain
-        const fineDetails = await blockchainService.getFineDetails(numericFineId);
+        const fineDetails = await fineService.getFineDetails(numericFineId);
         res.status(200).json(fineDetails);
     } catch (error: any) {
         console.error("Error in getFine controller:", error);
         
-        // Manejar diferentes tipos de errores
         if (error.message.includes('does not exist')) {
             return res.status(404).json({ 
                 message: 'Fine not found',
@@ -146,7 +119,7 @@ export const getFines = async (req: Request, res: Response, next: NextFunction) 
             });
         }
 
-        const fines = await blockchainService.getFinesDetails(page, pageSize);
+        const fines = await fineService.getAllFines(page, pageSize);
         res.status(200).json({
             message: 'Fines retrieved successfully.',
             data: fines,
@@ -182,7 +155,7 @@ export const getFineEvidence = async (req: Request, res: Response, next: NextFun
         }
 
         // Recuperar el archivo desde IPFS
-        const stream = await ipfsService.getFromIPFS(evidenceCID);
+        const stream = await fineService.getFineEvidence(evidenceCID);
         
         // Establecer headers
         res.setHeader('Content-Disposition', `inline; filename="evidence_${evidenceCID}"`);
@@ -208,7 +181,6 @@ export const getFineEvidence = async (req: Request, res: Response, next: NextFun
     } catch (error: any) {
         console.error("Error in getFineEvidence controller:", error);
         
-        // Manejar diferentes tipos de errores
         if (error.message.includes('not found')) {
             return res.status(404).json({ 
                 message: 'Evidence file not found in IPFS.', 
@@ -235,21 +207,14 @@ export const verifyBlockchainIntegrity = async (req: Request, res: Response, nex
             return res.status(400).json({ message: "Fine ID is required." });
         }
 
-        const integrityResult = await blockchainService.verifyBlockchainIntegrity(parseInt(fineId, 10));
+        const integrityResult = await fineService.verifyBlockchainIntegrity(parseInt(fineId, 10));
         
         res.status(200).json({
             success: true,
-            message: integrityResult.isIntegrityValid ? 
+            message: integrityResult.isValid ? 
                 'Blockchain integrity verified successfully.' : 
                 'Blockchain integrity verification failed.',
-            data: {
-                isValid: integrityResult.isIntegrityValid,
-                registrationBlock: integrityResult.details.registrationBlock,
-                registrationTimestamp: integrityResult.details.registrationTimestamp,
-                statusHistoryLength: integrityResult.details.statusHistoryLength,
-                lastStatusUpdate: integrityResult.details.lastStatusUpdate,
-                verificationDetails: integrityResult.details.verificationDetails
-            }
+            data: integrityResult.details
         });
     } catch (error: any) {
         console.error("Error in verifyBlockchainIntegrity controller:", error);
@@ -273,9 +238,7 @@ export const getFineFromSIMIT = async (req: Request, res: Response, next: NextFu
             return res.status(400).json({ message: "Plate number query parameter is required." });
         }
 
-        // Obtener datos de la API de Apitude/SIMIT
-        const simitData = await apitudeService.fetchFineFromApitude(plateNumber, new Date().toISOString().split('T')[0]);
-
+        const simitData = await fineService.getFineFromSIMIT(plateNumber);
         res.status(200).json(simitData);
     } catch (error: any) {
         console.error("Error in getFineFromSIMIT controller:", error);
@@ -287,45 +250,15 @@ export const getFineFromSIMIT = async (req: Request, res: Response, next: NextFu
  * Enlaza una multa con un ID de SIMIT.
  */
 export const linkFineToSIMIT = async (req: Request, res: Response, next: NextFunction) => {
-    const { fineId } = req.params;
-    const { simitId } = req.body;
-    const transactionHash = await blockchainService.linkFineToSIMIT(parseInt(fineId, 10), simitId);
-    res.status(200).json({ message: 'Fine linked to SIMIT successfully.', transactionHash });
-};
-
-/**
- * Obtiene los detalles del vehiculo por SIMIT.
- */
-export const getVehicleInfo = async (req: Request, res: Response, next: NextFunction) => {
-    const { plateNumber } = req.params;
-    const simitData = await apitudeService.fetchFineFromApitude(plateNumber, new Date().toISOString().split('T')[0]);
-    res.status(200).json(simitData);
-};
-
-/**
- * Obtiene los detalles del conductor por Registraduria.
- */
-export const getDriverDetailsFromRegistraduria = async (req: Request, res: Response, next: NextFunction) => {
-    throw new Error('Not implemented');
-};
-
-/**
- * Importa multas desde Apitude/SIMIT y las registra.
- */
-interface ImportFromApitudeAndRegisterRequest extends Request {
-    body: ImportFromApitudeDto;
-}
-
-interface ImportFromApitudeAndRegisterResponse extends Response {
-    json: (body: { message: string }) => this;
-}
-
-export const importFromApitudeAndRegister = async (
-    req: ImportFromApitudeAndRegisterRequest,
-    res: ImportFromApitudeAndRegisterResponse
-) => {
-    // Logic for importing fines from Apitude/SIMIT and registering them
-    res.status(200).json({ message: 'Fines imported and registered successfully' });
+    try {
+        const { fineId } = req.params;
+        const { simitId } = req.body;
+        const transactionHash = await fineService.linkFineToSIMIT(parseInt(fineId, 10), simitId);
+        res.status(200).json({ message: 'Fine linked to SIMIT successfully.', transactionHash });
+    } catch (error: any) {
+        console.error("Error in linkFineToSIMIT controller:", error);
+        res.status(500).json({ message: 'Error linking fine to SIMIT.', error: error.message });
+    }
 };
 
 /**
@@ -340,14 +273,8 @@ export const getFinesByPlate = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Plate number is required." });
         }
 
-        // Obtener IDs de multas desde la blockchain
-        const fineIds = await blockchainService.getFinesByPlate(plateNumber);
-        console.log("IDs de multas encontradas:", fineIds);
-        // Obtener detalles de cada multa
-        const finesDetails = await Promise.all(
-            fineIds.map(id => blockchainService.getFineDetails(parseInt(id, 10)))
-        );
-        console.log("Detalles de multas encontradas:", finesDetails);
+        const finesDetails = await fineService.getFinesByPlate(plateNumber);
+        
         res.status(200).json({
             message: `Fines for plate number ${plateNumber} retrieved successfully`,
             data: finesDetails
@@ -373,10 +300,7 @@ export const getFineStatusHistory = async (req: Request, res: Response, next: Ne
             return res.status(400).json({ message: "Fine ID is required." });
         }
 
-        // Obtener historial de estados desde la blockchain
-        const statusHistory = await blockchainService.getFineStatusHistoryFromBlockchain(parseInt(fineId, 10));
-
-        console.log("Status history:", statusHistory);
+        const statusHistory = await fineService.getFineStatusHistory(parseInt(fineId, 10));
         
         res.status(200).json({
             message: 'Fine status history retrieved successfully.',
@@ -393,70 +317,12 @@ export const getFineStatusHistory = async (req: Request, res: Response, next: Ne
  */
 export const getRecentFinesHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // Primero verificar si hay multas en el sistema
-        const totalFines = await blockchainService.getTotalFines();
+        const recentHistory = await fineService.getRecentFinesHistory();
         
-        if (totalFines === 0) {
-            return res.status(200).json({
-                success: true,
-                message: 'No fines found in the system',
-                data: []
-            });
-        }
-
-        // Obtener todas las multas
-        const fines = await blockchainService.getFinesDetails(1, Number(totalFines));
-        
-        // Array para almacenar todos los cambios de estado
-        let allStatusChanges = [];
-
-        // Obtener el historial de estados para cada multa
-        for (const fine of fines) {
-            // Obtener el historial de estados de la multa
-            const statusHistory = await blockchainService.getFineStatusHistoryFromBlockchain(
-                Number(fine.id)
-            );
-
-            // Agregar cada cambio de estado al array
-            statusHistory.forEach(change => {
-                allStatusChanges.push({
-                    fineId: fine.id,
-                    plateNumber: fine.plateNumber,
-                    status: change.state,
-                    reason: change.reason,
-                    timestamp: change.timestamp
-                });
-            });
-
-            // Agregar el estado inicial (creación de la multa)
-            allStatusChanges.push({
-                fineId: fine.id,
-                plateNumber: fine.plateNumber,
-                status: 0, // Estado PENDING
-                reason: `Multa registrada por ${fine.infractionType} en ${fine.location}`,
-                timestamp: fine.timestamp
-            });
-        }
-
-        // Ordenar todos los cambios por timestamp (más reciente primero)
-        allStatusChanges.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
-
-        // Tomar los 10 más recientes
-        const recentChanges = allStatusChanges.slice(0, 10);
-
-        // Formatear la respuesta
-        const formattedHistory = recentChanges.map(change => ({
-            status: Number(change.status),
-            reason: change.reason,
-            fineId: change.fineId,
-            plateNumber: change.plateNumber,
-            timestamp: new Date(Number(change.timestamp) * 1000).toISOString()
-        }));
-
         res.status(200).json({
             success: true,
-            message: 'Recent fines history retrieved successfully',
-            data: formattedHistory
+            message: recentHistory.length > 0 ? 'Recent fines history retrieved successfully' : 'No fines found in the system',
+            data: recentHistory
         });
     } catch (error: any) {
         console.error("Error in getRecentFinesHistory controller:", error);

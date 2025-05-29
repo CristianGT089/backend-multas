@@ -5,14 +5,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Definir el enum FineState para TypeScript
-export enum FineState {
-    PENDING = 0,
-    PAID = 1,
-    APPEALED = 2,
-    RESOLVED_APPEAL = 3,
-    CANCELLED = 4
-}
 
 // Interfaz para FineStatusUpdate
 export interface IFineStatusUpdate {

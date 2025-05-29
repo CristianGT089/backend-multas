@@ -297,7 +297,7 @@ router.get('/:fineId/status-history', asyncHandler(fineController.getFineStatusH
 router.put('/:fineId/link-simit', asyncHandler(fineController.linkFineToSIMIT));
 
 // Ruta para obtener los detalles del vehiculo
-router.get('/:plateNumber/simit', asyncHandler(fineController.getVehicleInfo));
+//router.get('/:plateNumber/simit', asyncHandler(fineController.getVehicleInfo));
 
 // Ruta para obtener los detalles de un conductor por Registraduria
 //router.get('/:documentNumber/registraduria', asyncHandler(fineController.getDriverDetailsFromRegistraduria));
