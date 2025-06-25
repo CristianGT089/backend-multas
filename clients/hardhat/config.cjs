@@ -1,4 +1,5 @@
 require('dotenv').config();
+require("@nomicfoundation/hardhat-toolbox");
 
 const hardhatConfig = {
   defaultNetwork: "localhost",
@@ -30,12 +31,16 @@ const hardhatConfig = {
   },
   paths: {
     sources: "./contracts",
-    tests: "./test",
+    tests: "./test/contracts",
     cache: "./cache",
     artifacts: "./artifacts"
   },
   mocha: {
     timeout: 40000
+  },
+  typechain: {
+    outDir: "typechain-types",
+    target: "ethers-v6"
   }
 };
 

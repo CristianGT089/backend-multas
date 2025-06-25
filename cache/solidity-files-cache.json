@@ -40,7 +40,7 @@
       ]
     },
     "/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1750827633312,
+      "lastModificationDate": 1750871816655,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -78,7 +78,7 @@
       ]
     },
     "/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1750827630470,
+      "lastModificationDate": 1750871815606,
       "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
