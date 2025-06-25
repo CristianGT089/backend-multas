@@ -138,8 +138,6 @@ test/
 
 ## 🚀 Ejecución de Pruebas
 
-### Comandos Disponibles
-
 ```bash
 # Ejecutar todas las pruebas
 npm run test:all
@@ -147,17 +145,7 @@ npm run test:all
 # Pruebas específicas por componente
 npm run test:contracts    # Solo Smart Contracts
 npm run test             # Solo API + IPFS
-
-# Modo desarrollo
-npm run test:watch       # Ejecución continua con Vitest
-npm run test:coverage    # Reporte de cobertura
 ```
-
-### Prerrequisitos
-
-1. **Node.js v20+** (compatible con ipfs-http-client)
-2. **Hardhat node** ejecutándose para pruebas de contratos
-3. **Variables de entorno** configuradas (ver `.env.example`)
 
 ---
 
@@ -165,117 +153,293 @@ npm run test:coverage    # Reporte de cobertura
 
 ### 1. Smart Contracts (14 pruebas)
 
-**Framework**: Hardhat + Chai + Ethers v6  
 **Archivo**: `test/contracts/fine-management.test.js`
 
-#### Funcionalidades Validadas:
+#### BC-001: Registro de Multas (5 pruebas)
 
-- ✅ **Registro de multas** con metadatos completos
-- ✅ **Actualización de estados** (registrada → pagada → anulada)
-- ✅ **Control de acceso** (solo owner puede registrar)
-- ✅ **Inmutabilidad de datos** (metadatos no modificables)
-- ✅ **Historial de estados** con timestamps
-- ✅ **Validaciones de entrada** y manejo de errores
-- ✅ **Eventos blockchain** (FineRegistered, StatusUpdated)
+**1.1. Should register a fine successfully**
+- **Propósito**: Verifica que una multa se registre correctamente en el blockchain
+- **Valida**: Emisión del evento `FineRegistered` con ID, placa y CID de evidencia
+- **Datos de prueba**: Placa "ABC123", tipo "EXCESO_VELOCIDAD", costo 150, ubicación "Calle Principal 123"
 
-#### Ejemplo de Prueba:
-```javascript
-it("Should register a fine successfully", async function () {
-  const fineData = {
-    plate: "ABC123",
-    violationType: "EXCESO_VELOCIDAD",
-    cost: 150,
-    evidenceCID: "QmTestCID123",
-    location: "Calle Principal 123",
-    timestamp: Math.floor(Date.now() / 1000)
-  };
-  
-  await expect(fineManagement.registerFine(fineData))
-    .to.emit(fineManagement, "FineRegistered")
-    .withArgs(1, fineData.plate, fineData.evidenceCID);
-});
-```
+**1.2. Should increment fine counter after registration**
+- **Propósito**: Confirma que el contador de multas se incremente después del registro
+- **Valida**: El ID de la multa sea secuencial (1, 2, 3...)
+- **Verifica**: Estado interno del contrato después de múltiples registros
+
+**1.3. Should store fine details correctly**
+- **Propósito**: Verifica que todos los metadatos se almacenen correctamente
+- **Valida**: Placa, tipo de infracción, costo, CID de evidencia, ubicación, timestamp
+- **Comprueba**: Acceso a través de `getFineDetails()` y `getFineRegistrationDetails()`
+
+**1.4. Should emit FineRegistered event with correct parameters**
+- **Propósito**: Valida que el evento blockchain contenga la información correcta
+- **Verifica**: Parámetros del evento (fineId, plate, evidenceCID)
+- **Confirma**: Consistencia entre datos registrados y evento emitido
+
+**1.5. Should handle multiple fine registrations**
+- **Propósito**: Prueba el registro de múltiples multas en secuencia
+- **Valida**: IDs únicos para cada multa
+- **Verifica**: Integridad de datos en registros múltiples
+
+#### BC-002: Gestión de Estados (4 pruebas)
+
+**2.1. Should update fine status successfully**
+- **Propósito**: Verifica la actualización del estado de una multa
+- **Estados probados**: REGISTRADA → PAGADA → ANULADA
+- **Valida**: Emisión del evento `StatusUpdated` con parámetros correctos
+
+**2.2. Should maintain status history**
+- **Propósito**: Confirma que se mantenga el historial completo de cambios de estado
+- **Valida**: Timestamps de cada cambio
+- **Verifica**: Orden cronológico de los estados
+
+**2.3. Should prevent invalid status transitions**
+- **Propósito**: Prueba que no se permitan transiciones de estado inválidas
+- **Casos**: Intentar cambiar de ANULADA a PAGADA
+- **Valida**: Reversión de transacción con mensaje de error apropiado
+
+**2.4. Should allow only owner to update status**
+- **Propósito**: Verifica control de acceso para cambios de estado
+- **Prueba**: Usuario no-owner intenta cambiar estado
+- **Valida**: Reversión con mensaje "Only owner can update status"
+
+#### BC-003: Control de Acceso (3 pruebas)
+
+**3.1. Should allow only owner to register fines**
+- **Propósito**: Verifica que solo el owner pueda registrar multas
+- **Prueba**: Usuario no-owner intenta registrar multa
+- **Valida**: Reversión con mensaje "Only owner can register fines"
+
+**3.2. Should allow only owner to update fine status**
+- **Propósito**: Confirma restricción de acceso para actualizaciones
+- **Prueba**: Usuario no-owner intenta cambiar estado
+- **Valida**: Reversión con mensaje apropiado
+
+**3.3. Should return correct owner address**
+- **Propósito**: Verifica que la función `owner()` devuelva la dirección correcta
+- **Valida**: Consistencia entre deployer y owner del contrato
+
+#### IM-001: Inmutabilidad de Metadatos (2 pruebas)
+
+**4.1. Should maintain immutable fine metadata**
+- **Propósito**: Verifica que los metadatos de registro no puedan modificarse
+- **Prueba**: Intentar modificar placa, tipo, costo después del registro
+- **Valida**: Los datos permanecen inmutables
+
+**4.2. Should preserve fine registration integrity**
+- **Propósito**: Confirma integridad de datos de registro a lo largo del tiempo
+- **Prueba**: Múltiples consultas de los mismos datos
+- **Valida**: Consistencia en todas las consultas
 
 ---
 
 ### 2. IPFS (13 pruebas)
 
-**Framework**: Vitest + ipfs-http-client  
 **Archivo**: `test/ipfs/ipfs.service.test.js`
 
-#### Funcionalidades Validadas:
+#### IPFS-001: Subida y Recuperación (6 pruebas)
 
-- ✅ **Subida de archivos** con CID único
-- ✅ **Recuperación de archivos** por CID
-- ✅ **Inmutabilidad** (mismo contenido = mismo CID)
-- ✅ **Manejo de archivos corruptos** o inexistentes
-- ✅ **Validación de tipos** de archivo
-- ✅ **Integridad de datos** (hash verification)
-- ✅ **Manejo de errores** de red y formato
+**1.1. Should upload file and return valid CID**
+- **Propósito**: Verifica que la subida genere un CID válido
+- **Valida**: Formato CIDv0 (Qm...) o CIDv1 (b...)
+- **Prueba**: Diferentes tipos de contenido (texto, binario)
 
-#### Ejemplo de Prueba:
-```javascript
-it("Should upload and retrieve file successfully", async () => {
-  const testData = Buffer.from("test content");
-  const cid = await ipfsService.uploadFile(testData);
-  
-  expect(cid).toMatch(/^Qm[A-Za-z0-9]{44}$/);
-  
-  const retrievedData = await ipfsService.getFile(cid);
-  expect(retrievedData).toEqual(testData);
-});
-```
+**1.2. Should retrieve uploaded file correctly**
+- **Propósito**: Confirma que se pueda recuperar el archivo original
+- **Valida**: Contenido idéntico al original
+- **Verifica**: Headers y metadatos del archivo
+
+**1.3. Should handle different file types**
+- **Propósito**: Prueba subida de diferentes formatos
+- **Tipos**: JPG, PNG, PDF, TXT
+- **Valida**: CIDs únicos para cada tipo
+
+**1.4. Should maintain file integrity**
+- **Propósito**: Verifica que no haya corrupción de datos
+- **Prueba**: Comparación byte por byte
+- **Valida**: Hash del contenido original vs recuperado
+
+**1.5. Should handle large files**
+- **Propósito**: Prueba archivos de tamaño considerable
+- **Tamaños**: 1MB, 5MB, 10MB
+- **Valida**: Subida y recuperación exitosa
+
+**1.6. Should handle empty files**
+- **Propósito**: Verifica manejo de archivos vacíos
+- **Valida**: CID válido para archivo vacío
+- **Prueba**: Recuperación de archivo vacío
+
+#### IPFS-002: Inmutabilidad (3 pruebas)
+
+**2.1. Should generate same CID for identical content**
+- **Propósito**: Verifica la propiedad content-addressed de IPFS
+- **Prueba**: Subir el mismo contenido múltiples veces
+- **Valida**: Mismo CID para contenido idéntico
+
+**2.2. Should generate different CIDs for different content**
+- **Propósito**: Confirma que contenido diferente genere CIDs diferentes
+- **Prueba**: Contenido ligeramente modificado
+- **Valida**: CIDs únicos para cada variación
+
+**2.3. Should maintain content integrity over time**
+- **Propósito**: Verifica persistencia de datos
+- **Prueba**: Recuperación después de múltiples subidas
+- **Valida**: Contenido inalterado
+
+#### IPFS-003: Manejo de Errores (4 pruebas)
+
+**3.1. Should handle non-existent CID**
+- **Propósito**: Prueba recuperación de CID inexistente
+- **Valida**: Error apropiado con mensaje descriptivo
+- **Verifica**: No crash del servicio
+
+**3.2. Should handle invalid CID format**
+- **Propósito**: Verifica validación de formato CID
+- **Pruebas**: CIDs malformados, strings vacíos
+- **Valida**: Error de formato con mensaje claro
+
+**3.3. Should handle network errors gracefully**
+- **Propósito**: Prueba resiliencia ante fallos de red
+- **Simula**: Timeouts, conexiones rechazadas
+- **Valida**: Manejo elegante de errores
+
+**3.4. Should handle corrupted file data**
+- **Propósito**: Verifica manejo de datos corruptos
+- **Prueba**: Intentar recuperar archivo con datos alterados
+- **Valida**: Detección de corrupción
 
 ---
 
 ### 3. API REST (24 pruebas)
 
-**Framework**: Vitest + Supertest  
 **Archivo**: `test/api/fines.test.js`
 
-#### Funcionalidades Validadas:
+#### API-001: Endpoints CRUD (8 pruebas)
 
-##### API-001: Endpoints CRUD (8 pruebas)
-- ✅ **POST /fines** - Registro de multa con evidencia
-- ✅ **GET /fines** - Listado con paginación
-- ✅ **GET /fines/:id** - Consulta por ID
-- ✅ **GET /fines/plate/:plate** - Consulta por placa
-- ✅ **PUT /fines/:id/status** - Actualización de estado
-- ✅ **GET /fines/:id/history** - Historial de estados
-- ✅ **GET /fines/history/recent** - Historial reciente
-- ✅ **GET /fines/:id/integrity** - Verificación de integridad
+**1.1. Should register a new fine successfully**
+- **Propósito**: Verifica el endpoint POST /fines
+- **Valida**: Código 201, fineId, evidenceCID, transactionHash
+- **Prueba**: Subida de archivo + metadatos de multa
 
-##### API-002: Validaciones (8 pruebas)
-- ✅ **Validación de archivos** (requeridos, formato)
-- ✅ **Validación de campos** (placa, tipo, costo)
-- ✅ **Validación de IDs** (formato, rango)
-- ✅ **Validación de paginación** (límites, formato)
-- ✅ **Validación de estados** (valores permitidos)
-- ✅ **Validación de CIDs** (formato IPFS)
+**1.2. Should get all fines with pagination**
+- **Propósito**: Prueba GET /fines con paginación
+- **Valida**: Código 200, estructura de respuesta con data y pagination
+- **Verifica**: Límites de página y ordenamiento
 
-##### API-003: Integración (8 pruebas)
-- ✅ **Integración blockchain** (registro en contrato)
-- ✅ **Integración IPFS** (almacenamiento de evidencia)
-- ✅ **Verificación de inmutabilidad** (historial blockchain)
-- ✅ **Manejo de errores** de red y servicios
+**1.3. Should get a specific fine by ID**
+- **Propósito**: Prueba GET /fines/:id
+- **Valida**: Código 200, datos completos de la multa
+- **Verifica**: Consistencia con datos registrados
 
-#### Ejemplo de Prueba:
-```javascript
-it("Should register a new fine successfully", async () => {
-  const response = await request(app)
-    .post("/fines")
-    .attach("evidence", Buffer.from("test evidence"), "test.jpg")
-    .field("plate", "ABC123")
-    .field("violationType", "EXCESO_VELOCIDAD")
-    .field("cost", "150")
-    .field("location", "Calle Principal 123");
-    
-  expect(response.status).toBe(201);
-  expect(response.body).toHaveProperty("fineId");
-  expect(response.body).toHaveProperty("evidenceCID");
-  expect(response.body).toHaveProperty("transactionHash");
-});
-```
+**1.4. Should get fines by plate number**
+- **Propósito**: Prueba GET /fines/plate/:plate
+- **Valida**: Código 200, success: true, array de multas
+- **Verifica**: Filtrado correcto por placa
+
+**1.5. Should update fine status successfully**
+- **Propósito**: Prueba PUT /fines/:id/status
+- **Valida**: Código 200, message, transactionHash
+- **Verifica**: Cambio de estado en blockchain
+
+**1.6. Should get fine status history**
+- **Propósito**: Prueba GET /fines/:id/history
+- **Valida**: Código 200, success: true, array de cambios
+- **Verifica**: Historial completo de estados
+
+**1.7. Should get recent fines history**
+- **Propósito**: Prueba GET /fines/history/recent
+- **Valida**: Código 200, success: true, últimos 10 cambios
+- **Verifica**: Orden cronológico inverso
+
+**1.8. Should get fine integrity verification**
+- **Propósito**: Prueba GET /fines/:id/integrity
+- **Valida**: Código 200, datos de integridad blockchain
+- **Verifica**: registrationBlock, statusHistoryLength
+
+#### API-002: Validaciones (8 pruebas)
+
+**2.1. Should reject fine registration without evidence file**
+- **Propósito**: Valida que se requiera archivo de evidencia
+- **Prueba**: POST sin archivo adjunto
+- **Valida**: Código 400, mensaje "File required"
+
+**2.2. Should reject fine registration with missing required fields**
+- **Propósito**: Verifica campos obligatorios
+- **Prueba**: POST sin placa, tipo, costo
+- **Valida**: Código 400, mensaje "Validation error"
+
+**2.3. Should reject invalid fine ID format**
+- **Propósito**: Valida formato de ID numérico
+- **Prueba**: GET con ID no numérico
+- **Valida**: Código 400, mensaje "Validation error"
+
+**2.4. Should reject negative fine ID**
+- **Propósito**: Verifica rango válido de IDs
+- **Prueba**: GET con ID negativo
+- **Valida**: Código 400, mensaje "Validation error"
+
+**2.5. Should reject invalid pagination parameters**
+- **Propósito**: Valida parámetros de paginación
+- **Prueba**: page negativo, limit excesivo
+- **Valida**: Código 400, mensaje "Validation error"
+
+**2.6. Should reject status update without required fields**
+- **Propósito**: Verifica campos para actualización de estado
+- **Prueba**: PUT sin newState o reason
+- **Valida**: Código 400, mensaje específico
+
+**2.7. Should reject invalid status value**
+- **Propósito**: Valida valores de estado permitidos
+- **Prueba**: Estado no válido (ej: "INVALIDO")
+- **Valida**: Código 400, mensaje "Invalid status provided"
+
+**2.8. Should reject invalid IPFS CID format**
+- **Propósito**: Verifica formato de CID en consultas
+- **Prueba**: CID malformado en parámetros
+- **Valida**: Código 400, mensaje de formato CID
+
+#### API-003: Integración (8 pruebas)
+
+**3.1. Should register fine and verify blockchain integration**
+- **Propósito**: Verifica integración completa con blockchain
+- **Prueba**: Registro completo y verificación en contrato
+- **Valida**: Consistencia entre API y blockchain
+
+**3.2. Should retrieve evidence from IPFS using CID**
+- **Propósito**: Prueba recuperación de evidencia desde IPFS
+- **Valida**: Código 200, headers de archivo, contenido correcto
+- **Verifica**: Integridad del archivo recuperado
+
+**3.3. Should handle non-existent evidence CID**
+- **Propósito**: Maneja CIDs inexistentes en IPFS
+- **Prueba**: CID válido pero no encontrado
+- **Valida**: Código 400, mensaje de error apropiado
+
+**3.4. Should verify blockchain integrity for existing fine**
+- **Propósito**: Verifica integridad de datos en blockchain
+- **Valida**: Código 200, success: true, datos de integridad
+- **Verifica**: registrationBlock, statusHistoryLength
+
+**3.5. Should demonstrate immutable blockchain history**
+- **Propósito**: Confirma inmutabilidad del historial
+- **Prueba**: Múltiples verificaciones del mismo registro
+- **Valida**: Datos consistentes en todas las consultas
+
+**3.6. Should handle integrity verification for non-existent fine**
+- **Propósito**: Maneja verificación de multas inexistentes
+- **Prueba**: ID de multa que no existe
+- **Valida**: Código 200, success: false, mensaje apropiado
+
+**3.7. Should handle server errors gracefully**
+- **Propósito**: Verifica manejo de errores 404 y rutas inexistentes
+- **Prueba**: Endpoints no implementados
+- **Valida**: Código 404, mensaje descriptivo
+
+**3.8. Should handle malformed requests**
+- **Propósito**: Prueba requests malformados
+- **Prueba**: JSON inválido, headers incorrectos
+- **Valida**: Código 400, mensaje de error de parseo
 
 ---
 
@@ -304,51 +468,6 @@ Estas pruebas garantizan que:
 
 ---
 
-## 🛠️ Configuración y Dependencias
-
-### Dependencias de Testing
-
-```json
-{
-  "devDependencies": {
-    "vitest": "^3.2.3",
-    "supertest": "^7.1.1",
-    "chai": "^4.5.0",
-    "@types/supertest": "^6.0.3"
-  }
-}
-```
-
-### Configuración de Vitest
-
-```javascript
-// vitest.config.js
-export default {
-  test: {
-    globals: true,
-    environment: 'node',
-    setupFiles: ['./test/setup.js']
-  }
-}
-```
-
-### Variables de Entorno Requeridas
-
-```bash
-# Blockchain
-PRIVATE_KEY=your_private_key
-CONTRACT_ADDRESS=deployed_contract_address
-
-# IPFS
-IPFS_API_URL=http://localhost:5001
-
-# API
-PORT=3000
-NODE_ENV=test
-```
-
----
-
 ## 📈 Métricas de Calidad
 
 ### Cobertura de Pruebas
@@ -368,78 +487,6 @@ NODE_ENV=test
 
 - **Estado actual**: 51/51 pruebas pasando (100%)
 - **Última ejecución**: ✅ Todas exitosas
-
----
-
-## 🔧 Solución de Problemas
-
-### Errores Comunes
-
-1. **"Contract not deployed"**
-   ```bash
-   npm run deploy  # Desplegar contrato en localhost
-   ```
-
-2. **"IPFS connection failed"**
-   ```bash
-   # Verificar que IPFS daemon esté ejecutándose
-   ipfs daemon
-   ```
-
-3. **"Nonce conflicts"**
-   ```bash
-   # Reiniciar Hardhat node
-   npm run dev:contracts
-   ```
-
-### Debugging
-
-```bash
-# Logs detallados de Hardhat
-DEBUG=hardhat:* npm run test:contracts
-
-# Logs de Vitest
-npm run test -- --reporter=verbose
-
-# Cobertura detallada
-npm run test:coverage
-```
-
----
-
-## 📚 Referencias
-
-- [Hardhat Testing Guide](https://hardhat.org/tutorial/testing-contracts)
-- [Vitest Documentation](https://vitest.dev/)
-- [Supertest API](https://github.com/visionmedia/supertest)
-- [IPFS HTTP Client](https://github.com/ipfs/js-ipfs/tree/master/packages/ipfs-http-client)
-
----
-
-## 🤝 Contribución
-
-Para agregar nuevas pruebas:
-
-1. **Seguir convenciones** de nomenclatura existentes
-2. **Incluir casos edge** y manejo de errores
-3. **Documentar** el propósito de cada prueba
-4. **Verificar** que todas las pruebas pasen
-
-### Estructura de Nueva Prueba
-
-```javascript
-describe("Nueva Funcionalidad", () => {
-  it("Should handle expected behavior", async () => {
-    // Arrange
-    // Act  
-    // Assert
-  });
-  
-  it("Should handle error cases", async () => {
-    // Test error scenarios
-  });
-});
-```
 
 ---
 
