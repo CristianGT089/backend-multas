@@ -10,7 +10,7 @@ class FineService {
         const result = await blockchainService.registerFine(plateNumber, evidenceCID, location, infractionType, cost, ownerIdentifier, externalSystemId);
         return {
             fineId: result.fineId,
-            ipfsHash: evidenceCID,
+            evidenceCID: evidenceCID,
             transactionHash: result.transactionHash,
         };
     }

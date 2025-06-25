@@ -38,8 +38,8 @@ export const createFineValidations = [
  * Validaciones para actualizar una multa
  */
 export const updateFineValidations = [
-    param('id')
-        .isInt()
+    param('fineId')
+        .isInt({ min: 1 })
         .withMessage('ID de multa inválido'),
     body('status')
         .optional()
@@ -89,24 +89,24 @@ export const getFinesValidations = [
  * Validaciones para obtener una multa específica
  */
 export const getFineValidations = [
-    param('id')
-        .isInt()
+    param('fineId')
+        .isInt({ min: 1 })
         .withMessage('ID de multa inválido')
 ];
 /**
  * Validaciones para eliminar una multa
  */
 export const deleteFineValidations = [
-    param('id')
-        .isInt()
+    param('fineId')
+        .isInt({ min: 1 })
         .withMessage('ID de multa inválido')
 ];
 /**
  * Validaciones para pagar una multa
  */
 export const payFineValidations = [
-    param('id')
-        .isInt()
+    param('fineId')
+        .isInt({ min: 1 })
         .withMessage('ID de multa inválido'),
     body('paymentMethod')
         .trim()
@@ -124,8 +124,8 @@ export const payFineValidations = [
  * Validaciones para apelar una multa
  */
 export const appealFineValidations = [
-    param('id')
-        .isInt()
+    param('fineId')
+        .isInt({ min: 1 })
         .withMessage('ID de multa inválido'),
     body('reason')
         .trim()

@@ -23,7 +23,7 @@ class FineService {
 
         return {
             fineId: result.fineId,
-            ipfsHash: evidenceCID,
+            evidenceCID: evidenceCID,
             transactionHash: result.transactionHash,
         };
     }

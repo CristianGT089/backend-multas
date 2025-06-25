@@ -7,7 +7,7 @@ export interface IFineDetails {
     location: string;
     timestamp: string;
     infractionType: string;
-    cost: string;
+    cost: number;
     ownerIdentifier: string;
     currentState: string;
     registeredBy: string;

@@ -1,4 +1,5 @@
-import { ethers } from "hardhat";
+import hardhat from "hardhat";
+const { ethers } = hardhat;
 async function main() {
     console.log("Iniciando despliegue del contrato FineManagement...");
     // Obtener la cuenta que desplegará el contrato

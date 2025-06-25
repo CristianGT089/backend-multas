@@ -210,7 +210,7 @@ export const verifyBlockchainIntegrity = async (req: Request, res: Response, nex
         const integrityResult = await fineService.verifyBlockchainIntegrity(parseInt(fineId, 10));
         
         res.status(200).json({
-            success: true,
+            success: integrityResult.isValid,
             message: integrityResult.isValid ? 
                 'Blockchain integrity verified successfully.' : 
                 'Blockchain integrity verification failed.',
@@ -218,6 +218,22 @@ export const verifyBlockchainIntegrity = async (req: Request, res: Response, nex
         });
     } catch (error: any) {
         console.error("Error in verifyBlockchainIntegrity controller:", error);
+        
+        // Si la multa no existe, devolver success: false
+        if (error.message.includes('does not exist') || error.message.includes('no encontrada')) {
+            return res.status(200).json({
+                success: false,
+                message: 'Fine not found or does not exist.',
+                data: {
+                    registrationBlock: 0,
+                    registrationTimestamp: 0,
+                    statusHistoryLength: 0,
+                    lastStatusUpdate: 0,
+                    verificationDetails: ['Fine not found in blockchain']
+                }
+            });
+        }
+        
         res.status(500).json({ 
             success: false,
             message: 'Error verifying blockchain integrity.', 
@@ -276,12 +292,14 @@ export const getFinesByPlate = async (req: Request, res: Response) => {
         const finesDetails = await fineService.getFinesByPlate(plateNumber);
         
         res.status(200).json({
+            success: true,
             message: `Fines for plate number ${plateNumber} retrieved successfully`,
             data: finesDetails
         });
     } catch (error: any) {
         console.error("Error in getFinesByPlate controller:", error);
         res.status(500).json({ 
+            success: false,
             message: 'Error retrieving fines by plate.', 
             error: error.message 
         });
@@ -303,12 +321,17 @@ export const getFineStatusHistory = async (req: Request, res: Response, next: Ne
         const statusHistory = await fineService.getFineStatusHistory(parseInt(fineId, 10));
         
         res.status(200).json({
+            success: true,
             message: 'Fine status history retrieved successfully.',
             data: statusHistory,
         });
     } catch (error: any) {
         console.error("Error in getFineStatusHistory controller:", error);
-        res.status(500).json({ message: 'Error retrieving fine status history.', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Error retrieving fine status history.', 
+            error: error.message 
+        });
     }
 };
 

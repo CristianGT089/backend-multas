@@ -16,7 +16,7 @@ export const validate = (validations) => {
         // Si hay errores, devolver respuesta con errores
         return res.status(400).json({
             success: false,
-            message: 'Error de validación',
+            message: 'Validation error',
             errors: errors.array().map(error => ({
                 field: error.type === 'field' ? error.path : 'unknown',
                 message: error.msg,
@@ -36,18 +36,18 @@ export const validateFile = (allowedTypes, maxSize = 5 * 1024 * 1024) => {
         if (!req.file) {
             return res.status(400).json({
                 success: false,
-                message: 'Archivo requerido',
-                errors: [{ field: 'file', message: 'No se proporcionó ningún archivo' }]
+                message: 'File required',
+                errors: [{ field: 'file', message: 'No file provided' }]
             });
         }
         // Validar tipo de archivo
         if (!allowedTypes.includes(req.file.mimetype)) {
             return res.status(400).json({
                 success: false,
-                message: 'Tipo de archivo no permitido',
+                message: 'File type not allowed',
                 errors: [{
                         field: 'file',
-                        message: `Tipo de archivo no permitido. Tipos permitidos: ${allowedTypes.join(', ')}`
+                        message: `File type not allowed. Allowed types: ${allowedTypes.join(', ')}`
                     }]
             });
         }
@@ -55,10 +55,10 @@ export const validateFile = (allowedTypes, maxSize = 5 * 1024 * 1024) => {
         if (req.file.size > maxSize) {
             return res.status(400).json({
                 success: false,
-                message: 'Archivo demasiado grande',
+                message: 'File too large',
                 errors: [{
                         field: 'file',
-                        message: `El archivo excede el tamaño máximo de ${maxSize / (1024 * 1024)}MB`
+                        message: `File exceeds maximum size of ${maxSize / (1024 * 1024)}MB`
                     }]
             });
         }
