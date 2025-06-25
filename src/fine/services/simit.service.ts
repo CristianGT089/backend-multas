@@ -1,14 +1,15 @@
 //typescript
 import axios from 'axios';
-import { config } from '../../config/index.js';
+import { externalApiConfig } from '../../../clients/external/config.js';
 
 const apiClient = axios.create({
-  baseURL: config.simitApiBaseUrl,
+  baseURL: externalApiConfig.simit.baseUrl,
   headers: {
     // Add Authorization headers if SIMIT API requires them
-    // 'Authorization': `Bearer ${config.simitApiKey}`,
+    // 'Authorization': `Bearer ${externalApiConfig.simit.apiKey}`,
     'Content-Type': 'application/json',
   },
+  timeout: externalApiConfig.simit.timeout,
 });
 
 // Example: This is highly dependent on Apitude's actual API structure
