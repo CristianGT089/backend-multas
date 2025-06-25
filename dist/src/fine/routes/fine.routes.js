@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as fineController from '../../fine/controllers/fine.controller.js';
 import multer from 'multer';
 import { asyncHandler } from '../utils/async.handler.js';
+import { validate, validateFile, getFinesValidations, getFineValidations, uploadInfractionPhotoValidations, ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE } from '../../validations/index.js';
 const router = Router();
 const storage = multer.memoryStorage(); // Almacena archivos en memoria para subirlos a IPFS
 const upload = multer({ storage: storage });
@@ -23,7 +24,7 @@ const upload = multer({ storage: storage });
  *       500:
  *         description: Error del servidor
  */
-router.get('/', asyncHandler(fineController.getFines));
+router.get('/', validate(getFinesValidations), asyncHandler(fineController.getFines));
 /**
  * @swagger
  * /api/fines/recent-history:
@@ -133,7 +134,7 @@ router.get('/evidence/:evidenceCID', asyncHandler(fineController.getFineEvidence
  *       500:
  *         description: Error del servidor
  */
-router.post('/', upload.single('evidenceFile'), asyncHandler(fineController.registerFine));
+router.post('/', upload.single('evidenceFile'), validateFile(ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE), validate(uploadInfractionPhotoValidations), asyncHandler(fineController.registerFine));
 /**
  * @swagger
  * /api/fines/{fineId}/integrity:
@@ -203,7 +204,7 @@ router.post('/', upload.single('evidenceFile'), asyncHandler(fineController.regi
  *                   type: string
  *                   description: Detalles del error
  */
-router.get('/:fineId/integrity', asyncHandler(fineController.verifyBlockchainIntegrity));
+router.get('/:fineId/integrity', validate(getFineValidations), asyncHandler(fineController.verifyBlockchainIntegrity));
 /**
  * @swagger
  * /api/fines/{fineId}/status-history:
@@ -221,7 +222,7 @@ router.get('/:fineId/integrity', asyncHandler(fineController.verifyBlockchainInt
  *       500:
  *         description: Error del servidor
  */
-router.get('/:fineId/status-history', asyncHandler(fineController.getFineStatusHistory));
+router.get('/:fineId/status-history', validate(getFineValidations), asyncHandler(fineController.getFineStatusHistory));
 /**
  * @swagger
  * /api/fines/{fineId}/status:
@@ -256,9 +257,9 @@ router.get('/:fineId/status-history', asyncHandler(fineController.getFineStatusH
  *       500:
  *         description: Error del servidor
  */
-router.put('/:fineId/status', asyncHandler(fineController.updateFineStatus));
+router.put('/:fineId/status', validate(getFineValidations), asyncHandler(fineController.updateFineStatus));
 // Ruta para asociar una multa con un ID de SIMIT
-router.put('/:fineId/link-simit', asyncHandler(fineController.linkFineToSIMIT));
+router.put('/:fineId/link-simit', validate(getFineValidations), asyncHandler(fineController.linkFineToSIMIT));
 /**
  * @swagger
  * /api/fines/{fineId}:
@@ -283,7 +284,7 @@ router.put('/:fineId/link-simit', asyncHandler(fineController.linkFineToSIMIT));
  *       500:
  *         description: Error del servidor
  */
-router.get('/:fineId', asyncHandler(fineController.getFine));
+router.get('/:fineId', validate(getFineValidations), asyncHandler(fineController.getFine));
 // Ruta para obtener los detalles del vehiculo
 //router.get('/:plateNumber/simit', asyncHandler(fineController.getVehicleInfo));
 // Ruta para obtener los detalles de un conductor por Registraduria
