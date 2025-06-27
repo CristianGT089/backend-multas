@@ -1,16 +1,9 @@
 import { ethers } from 'ethers';
 import FineManagementArtifact from '../../../../fotomultas/artifacts/contracts/FineManagement.sol/FineManagement.json' with { type: "json" };
-import { IBlockchainRepository, IFineDetails } from './interfaces/blockchain.repository.interface.js';
+import { IBlockchainRepository } from './interfaces/blockchain.repository.interface.js';
 import { blockchainConfig } from '../../../clients/blockchain/config.js';
-
-// Interfaz para FineStatusUpdate
-export interface IFineStatusUpdate {
-    lastUpdatedTimestamp: string;
-    oldState: number;
-    newState: number;
-    reason: string;
-    updatedBy: string;
-}
+import { IFineDetails } from '../interfaces/fine_details.interface.js';
+import { IFineStatusUpdate } from '../interfaces/fine_status_update.interface';
 
 export class BlockchainRepository implements IBlockchainRepository {
     private static instance: BlockchainRepository;

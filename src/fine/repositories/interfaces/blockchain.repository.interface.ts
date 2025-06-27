@@ -1,27 +1,6 @@
 import { ethers } from 'ethers';
-
-export interface IFineDetails {
-    id: string;
-    plateNumber: string;
-    evidenceCID: string;
-    location: string;
-    timestamp: string;
-    infractionType: string;
-    cost: number;
-    ownerIdentifier: string;
-    currentState: string;
-    registeredBy: string;
-    externalSystemId: string;
-    hashImageIPFS: string;
-}
-
-export interface IFineStatusUpdate {
-    lastUpdatedTimestamp: string;
-    oldState: number;
-    newState: number;
-    reason: string;
-    updatedBy: string;
-}
+import { IFineStatusUpdate } from '../../interfaces/fine_status_update.interface.js';
+import { IFineDetails } from '../../interfaces/fine_details.interface.js';
 
 export interface IBlockchainRepository {
     // Métodos de inicialización y verificación
