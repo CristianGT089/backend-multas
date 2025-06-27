@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as fineController from '../../fine/controllers/fine.controller.js';
+import { FineController } from '../../fine/controllers/fine.controller.js';
 import multer from 'multer';
 import { asyncHandler } from '../utils/async.handler.js';
 import { 
@@ -11,10 +11,14 @@ import {
   ALLOWED_IMAGE_TYPES,
   MAX_IMAGE_SIZE
 } from '../../validations/index.js';
+import { FineService } from '../services/fine.service.js';
+
 
 const router = Router();
 const storage = multer.memoryStorage(); // Almacena archivos en memoria para subirlos a IPFS
 const upload = multer({ storage: storage });
+
+const fineController = new FineController(new FineService());
 
 /**
  * @swagger

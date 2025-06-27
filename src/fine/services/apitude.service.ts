@@ -4,7 +4,7 @@
 
 import { ApitudeFineData } from '../interfaces/apitude_fine_data.interface.js';
 
-class ApitudeService {
+export class ApitudeService {
     private static instance: ApitudeService;
 
     private constructor() {}
@@ -39,5 +39,3 @@ class ApitudeService {
         return null;
     };
 }
-
-export const apitudeService = ApitudeService.getInstance();

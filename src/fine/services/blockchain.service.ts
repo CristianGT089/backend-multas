@@ -1,7 +1,7 @@
+import { IFineDetails } from '../interfaces/fine_details.interface.js';
 import { BlockchainRepository } from '../repositories/blockchain.repository.js';
-import { IFineDetails } from '../repositories/interfaces/blockchain.repository.interface.js';
 
-class BlockchainService {
+export class BlockchainService {
     private static instance: BlockchainService;
     private repository: BlockchainRepository;
 
@@ -114,7 +114,3 @@ class BlockchainService {
         }
     }
 }
-
-// Exportar una instancia única del servicio
-export const blockchainService = BlockchainService.getInstance();
-
