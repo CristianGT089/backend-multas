@@ -15,7 +15,7 @@ export const createFineValidations = [
     .trim()
     .notEmpty()
     .withMessage('El tipo de infracción es requerido')
-    .isIn(['EXCESO_VELOCIDAD', 'SEMAFORO_ROJO', 'ESTACIONAMIENTO_PROHIBIDO', 'OTRO'])
+    .isIn(['EXCESO_VELOCIDAD', 'SEMAFORO_ROJO', 'SOAT_VENCIDO', 'TECNOMECANICA_VENCIDA', 'OTRO'])
     .withMessage('Tipo de infracción no válido'),
   
   body('location')
