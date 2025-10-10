@@ -18,7 +18,7 @@ const router = Router();
 const storage = multer.memoryStorage(); // Almacena archivos en memoria para subirlos a IPFS
 const upload = multer({ storage: storage });
 
-const fineController = new FineController(new FineService());
+const fineController = new FineController(FineService.getInstance());
 
 /**
  * @swagger
@@ -38,7 +38,7 @@ const fineController = new FineController(new FineService());
  *       500:
  *         description: Error del servidor
  */
-router.get('/', validate(getFinesValidations), asyncHandler(fineController.getFines));
+router.get('/', validate(getFinesValidations), asyncHandler(fineController.getFines.bind(fineController)));
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.get('/', validate(getFinesValidations), asyncHandler(fineController.getFi
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/recent-history', asyncHandler(fineController.getRecentFinesHistory));
+router.get('/recent-history', asyncHandler(fineController.getRecentFinesHistory.bind(fineController)));
 
 /**
  * @swagger
@@ -90,7 +90,7 @@ router.get('/recent-history', asyncHandler(fineController.getRecentFinesHistory)
  *       500:
  *         description: Error del servidor
  */
-router.get('/by-plate/:plateNumber', asyncHandler(fineController.getFinesByPlate));
+router.get('/by-plate/:plateNumber', asyncHandler(fineController.getFinesByPlate.bind(fineController)));
 
 /**
  * @swagger
@@ -109,7 +109,7 @@ router.get('/by-plate/:plateNumber', asyncHandler(fineController.getFinesByPlate
  *       500:
  *         description: Error del servidor
  */
-router.get('/evidence/:evidenceCID', asyncHandler(fineController.getFineEvidence));
+router.get('/evidence/:evidenceCID', asyncHandler(fineController.getFineEvidence.bind(fineController)));
 
 /**
  * @swagger
@@ -156,7 +156,7 @@ router.post('/',
   upload.single('evidenceFile'), 
   validateFile(ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE),
   validate(uploadInfractionPhotoValidations), 
-  asyncHandler(fineController.registerFine)
+  asyncHandler(fineController.registerFine.bind(fineController))
 );
 
 /**
@@ -228,7 +228,7 @@ router.post('/',
  *                   type: string
  *                   description: Detalles del error
  */
-router.get('/:fineId/integrity', validate(getFineValidations), asyncHandler(fineController.verifyBlockchainIntegrity));
+router.get('/:fineId/integrity', validate(getFineValidations), asyncHandler(fineController.verifyBlockchainIntegrity.bind(fineController)));
 
 /**
  * @swagger
@@ -247,7 +247,7 @@ router.get('/:fineId/integrity', validate(getFineValidations), asyncHandler(fine
  *       500:
  *         description: Error del servidor
  */
-router.get('/:fineId/status-history', validate(getFineValidations), asyncHandler(fineController.getFineStatusHistory));
+router.get('/:fineId/status-history', validate(getFineValidations), asyncHandler(fineController.getFineStatusHistory.bind(fineController)));
 
 /**
  * @swagger
@@ -283,10 +283,10 @@ router.get('/:fineId/status-history', validate(getFineValidations), asyncHandler
  *       500:
  *         description: Error del servidor
  */
-router.put('/:fineId/status', validate(getFineValidations), asyncHandler(fineController.updateFineStatus));
+router.put('/:fineId/status', validate(getFineValidations), asyncHandler(fineController.updateFineStatus.bind(fineController)));
 
 // Ruta para asociar una multa con un ID de SIMIT
-router.put('/:fineId/link-simit', validate(getFineValidations), asyncHandler(fineController.linkFineToSIMIT));
+router.put('/:fineId/link-simit', validate(getFineValidations), asyncHandler(fineController.linkFineToSIMIT.bind(fineController)));
 
 /**
  * @swagger
@@ -312,7 +312,7 @@ router.put('/:fineId/link-simit', validate(getFineValidations), asyncHandler(fin
  *       500:
  *         description: Error del servidor
  */
-router.get('/:fineId', validate(getFineValidations), asyncHandler(fineController.getFine));
+router.get('/:fineId', validate(getFineValidations), asyncHandler(fineController.getFine.bind(fineController)));
 
 // Ruta para obtener los detalles del vehiculo
 //router.get('/:plateNumber/simit', asyncHandler(fineController.getVehicleInfo));

@@ -4,14 +4,22 @@ import { BlockchainService } from './blockchain.service.js';
 import { SimitService } from './simit.service.js';
 
 export class FineService {
+    private static instance: FineService;
     private _ipfsService: IPFSService;
     private _blockchainService: BlockchainService;
     private _simitService: SimitService;
 
-    constructor() {
+    private constructor() {
         this._ipfsService = IPFSService.getInstance();
         this._blockchainService = BlockchainService.getInstance();
         this._simitService = SimitService.getInstance();
+    }
+
+    public static getInstance(): FineService {
+        if (!FineService.instance) {
+            FineService.instance = new FineService();
+        }
+        return FineService.instance;
     }
 
     async registerFine(file: Express.Multer.File, fineData: FineData) {
