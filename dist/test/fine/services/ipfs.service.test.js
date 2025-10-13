@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { ipfsService } from '../../../src/fine/services/ipfs.service.js';
+import { IPFSService } from '../../../src/fine/services/ipfs.service.js';
 import { IPFSRepository } from '../../../src/fine/repositories/ipfs.repository.js';
+const ipfsService = IPFSService.getInstance();
 // Mock del repositorio IPFS
 vi.mock('../../../src/fine/repositories/ipfs.repository.js', () => {
     const mockRepository = {

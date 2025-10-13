@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import FineManagementArtifact from '../../../../fotomultas/artifacts/contracts/FineManagement.sol/FineManagement.json' with { type: "json" };
+import FineManagementArtifact from '../../../artifacts/contracts/FineManagement.sol/FineManagement.json' with { type: "json" };
 import { blockchainConfig } from '../../../clients/blockchain/config.js';
 export class BlockchainRepository {
     static instance;

@@ -1,7 +1,7 @@
 // Mock service for Apitude/SIMIT API
 // In a real scenario, this would use 'axios' or 'node-fetch' to call the external API.
 // The URL from your PDF: https://apitude.co/es/docs/services/simit-co/
-class ApitudeService {
+export class ApitudeService {
     static instance;
     constructor() { }
     static getInstance() {
@@ -32,4 +32,3 @@ class ApitudeService {
         return null;
     };
 }
-export const apitudeService = ApitudeService.getInstance();

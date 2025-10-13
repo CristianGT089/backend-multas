@@ -1,5 +1,5 @@
 import { IPFSRepository } from '../repositories/ipfs.repository.js';
-class IPFSService {
+export class IPFSService {
     static instance;
     repository;
     constructor() {
@@ -24,5 +24,3 @@ class IPFSService {
         return this.repository.getFromIPFS(cid);
     }
 }
-// Exportar una instancia única del servicio
-export const ipfsService = IPFSService.getInstance();

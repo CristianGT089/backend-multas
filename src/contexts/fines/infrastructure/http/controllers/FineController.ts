@@ -204,6 +204,25 @@ export class FineController {
             const page = pageParam ? parseInt(pageParam) : 1;
             const pageSize = pageSizeParam ? parseInt(pageSizeParam) : 10;
 
+            // Validar parámetros de paginación
+            if (page < 1) {
+                res.status(400).json({
+                    success: false,
+                    message: "Page number must be greater than or equal to 1.",
+                    providedPage: page
+                });
+                return;
+            }
+
+            if (pageSize < 1 || pageSize > 100) {
+                res.status(400).json({
+                    success: false,
+                    message: "Page size must be between 1 and 100.",
+                    providedPageSize: pageSize
+                });
+                return;
+            }
+
             // Ejecutar caso de uso
             const result = await this.getAllFinesUseCase.execute({ page, pageSize });
 

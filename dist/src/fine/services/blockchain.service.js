@@ -1,5 +1,5 @@
 import { BlockchainRepository } from '../repositories/blockchain.repository.js';
-class BlockchainService {
+export class BlockchainService {
     static instance;
     repository;
     constructor() {
@@ -79,5 +79,3 @@ class BlockchainService {
         }
     }
 }
-// Exportar una instancia única del servicio
-export const blockchainService = BlockchainService.getInstance();

@@ -1,13 +1,28 @@
-import { ipfsService } from './ipfs.service.js';
-import { blockchainService } from './blockchain.service.js';
-import { apitudeService } from './apitude.service.js';
-class FineService {
+import { IPFSService } from './ipfs.service.js';
+import { BlockchainService } from './blockchain.service.js';
+import { SimitService } from './simit.service.js';
+export class FineService {
+    static instance;
+    _ipfsService;
+    _blockchainService;
+    _simitService;
+    constructor() {
+        this._ipfsService = IPFSService.getInstance();
+        this._blockchainService = BlockchainService.getInstance();
+        this._simitService = SimitService.getInstance();
+    }
+    static getInstance() {
+        if (!FineService.instance) {
+            FineService.instance = new FineService();
+        }
+        return FineService.instance;
+    }
     async registerFine(file, fineData) {
         const { plateNumber, location, infractionType, cost, ownerIdentifier, externalSystemId } = fineData;
         // Subir evidencia a IPFS
-        const evidenceCID = await ipfsService.uploadToIPFS(file.buffer, file.originalname);
+        const evidenceCID = await this._ipfsService.uploadToIPFS(file.buffer, file.originalname);
         // Registrar multa en la blockchain
-        const result = await blockchainService.registerFine(plateNumber, evidenceCID, location, infractionType, cost, ownerIdentifier, externalSystemId);
+        const result = await this._blockchainService.registerFine(plateNumber, evidenceCID, location, infractionType, cost, ownerIdentifier, externalSystemId);
         return {
             fineId: result.fineId,
             evidenceCID: evidenceCID,
@@ -15,20 +30,20 @@ class FineService {
         };
     }
     async updateFineStatus(fineId, newState, reason) {
-        const transactionHash = await blockchainService.updateFineStatus(fineId, newState, reason);
+        const transactionHash = await this._blockchainService.updateFineStatus(fineId, newState, reason);
         return { transactionHash };
     }
     async getFineDetails(fineId) {
-        return await blockchainService.getFineDetails(fineId);
+        return await this._blockchainService.getFineDetails(fineId);
     }
     async getAllFines(page, pageSize) {
-        return await blockchainService.getFinesDetails(page, pageSize);
+        return await this._blockchainService.getFinesDetails(page, pageSize);
     }
     async getFineEvidence(evidenceCID) {
-        return await ipfsService.getFromIPFS(evidenceCID);
+        return await this._ipfsService.getFromIPFS(evidenceCID);
     }
     async verifyBlockchainIntegrity(fineId) {
-        const integrityResult = await blockchainService.verifyBlockchainIntegrity(fineId);
+        const integrityResult = await this._blockchainService.verifyBlockchainIntegrity(fineId);
         return {
             isValid: integrityResult.isIntegrityValid,
             details: {
@@ -41,31 +56,31 @@ class FineService {
         };
     }
     async getFineFromSIMIT(plateNumber) {
-        return await apitudeService.fetchFineFromApitude(plateNumber, new Date().toISOString().split('T')[0]);
+        return await this._simitService.getSIMITFineByPlate(plateNumber);
     }
     async linkFineToSIMIT(fineId, simitId) {
-        return await blockchainService.linkFineToSIMIT(fineId, simitId);
+        return await this._blockchainService.linkFineToSIMIT(fineId, simitId);
     }
     async getFinesByPlate(plateNumber) {
-        const fineIds = await blockchainService.getFinesByPlate(plateNumber);
-        return await Promise.all(fineIds.map(id => blockchainService.getFineDetails(parseInt(id, 10))));
+        const fineIds = await this._blockchainService.getFinesByPlate(plateNumber);
+        return await Promise.all(fineIds.map(id => this._blockchainService.getFineDetails(parseInt(id, 10))));
     }
     async getFineStatusHistory(fineId) {
-        return await blockchainService.getFineStatusHistoryFromBlockchain(fineId);
+        return await this._blockchainService.getFineStatusHistoryFromBlockchain(fineId);
     }
     async getRecentFinesHistory() {
         // Obtener el total de multas
-        const totalFines = await blockchainService.getTotalFines();
+        const totalFines = await this._blockchainService.getTotalFines();
         if (totalFines === 0) {
             return [];
         }
         // Obtener todas las multas
-        const fines = await blockchainService.getFinesDetails(1, Number(totalFines));
+        const fines = await this._blockchainService.getFinesDetails(1, Number(totalFines));
         // Array para almacenar todos los cambios de estado
         let allStatusChanges = [];
         // Obtener el historial de estados para cada multa
         for (const fine of fines) {
-            const statusHistory = await blockchainService.getFineStatusHistoryFromBlockchain(Number(fine.id));
+            const statusHistory = await this._blockchainService.getFineStatusHistoryFromBlockchain(Number(fine.id));
             // Agregar cada cambio de estado al array
             statusHistory.forEach(change => {
                 allStatusChanges.push({
@@ -98,4 +113,3 @@ class FineService {
         }));
     }
 }
-export const fineService = new FineService();

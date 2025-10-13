@@ -141,7 +141,7 @@ describe("Fine API Tests", () => {
         });
 
         it("Should get fines by plate number", async () => {
-            const plateNumber = "TEST123";
+            const plateNumber = "TST123";
 
             const response = await request(app)
                 .get(`/api/fines/plate/${plateNumber}`)
@@ -317,13 +317,40 @@ describe("Fine API Tests", () => {
             expect(response.body).toHaveProperty("success", false);
         });
 
-        // TODO: Fix pagination validation - page=0 should return 400 but currently returns 200
-        it.skip("Should reject invalid pagination parameters", async () => {
+        it("Should reject page=0 in pagination", async () => {
             const response = await request(app)
                 .get("/api/fines?page=0&pageSize=5")
                 .expect(400);
 
             expect(response.body).toHaveProperty("success", false);
+            expect(response.body.message).toContain("greater than or equal to 1");
+        });
+
+        it("Should reject negative page numbers", async () => {
+            const response = await request(app)
+                .get("/api/fines?page=-1&pageSize=5")
+                .expect(400);
+
+            expect(response.body).toHaveProperty("success", false);
+            expect(response.body.message).toContain("greater than or equal to 1");
+        });
+
+        it("Should reject pageSize > 100", async () => {
+            const response = await request(app)
+                .get("/api/fines?page=1&pageSize=150")
+                .expect(400);
+
+            expect(response.body).toHaveProperty("success", false);
+            expect(response.body.message).toContain("between 1 and 100");
+        });
+
+        it("Should reject pageSize = 0", async () => {
+            const response = await request(app)
+                .get("/api/fines?page=1&pageSize=0")
+                .expect(400);
+
+            expect(response.body).toHaveProperty("success", false);
+            expect(response.body.message).toContain("between 1 and 100");
         });
 
         it("Should reject status update without required fields", async () => {

@@ -1,0 +1,1231 @@
+
+> fotomultas-backend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 /home/cristian-guzman/Proyectos/trabajo-grado/backend
+
+ ✓ test/fine/services/ipfs.service.test.ts (8 tests) 10ms
+ ✓ test/fine/utils/errorHandler.test.ts (7 tests) 12ms
+stdout | test/ipfs/ipfs.service.test.ts > IPFS Service Tests > IPFS-001: Subida y recuperación de archivos > Should upload file to IPFS and get CID
+Archivo subido con CID: QmZX62RmfkWgykDWFy7RqeFxCeFHdKevLGajgEf7f6uDV2
+
+stdout | test/api/fine.api.test.ts
+[DI] Fines context dependencies configured successfully
+Configuración del servicio blockchain: {
+  rpcUrl: [32m'http://127.0.0.1:8545'[39m,
+  contractAddress: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  ownerAddress: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m
+}
+
+stdout | test/security/file-upload.test.ts
+[DI] Fines context dependencies configured successfully
+Configuración del servicio blockchain: {
+  rpcUrl: [32m'http://127.0.0.1:8545'[39m,
+  contractAddress: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  ownerAddress: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m
+}
+
+stdout | test/security/input-validation.test.ts
+[DI] Fines context dependencies configured successfully
+Configuración del servicio blockchain: {
+  rpcUrl: [32m'http://127.0.0.1:8545'[39m,
+  contractAddress: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  ownerAddress: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m
+}
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should sanitize plate number with script tags
+Error in RegisterFineUseCase: DomainException: Invalid plate number format. Expected format: ABC123 (3 letters + 3 numbers)
+    at PlateNumber.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:22:19[90m)[39m
+    at new PlateNumber [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:11:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:29:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:30:45[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Conectando al nodo IPFS local en: http://127.0.0.1:5001/api/v0
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Conectado al nodo IPFS local: { version: [32m'0.34.1'[39m, commit: [32m''[39m, repo: [32m'16'[39m }
+Servicio IPFS inicializado exitosamente
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should reject files larger than 10MB
+--- ERROR LOG ---
+Timestamp: 2025-10-13T20:34:25.180Z
+Route: POST /api/fines
+Request Body: {
+  "plateNumber": "ABC123",
+  "location": "Test Location",
+  "infractionType": "EXCESO_VELOCIDAD",
+  "cost": "500000",
+  "ownerIdentifier": "12345678",
+  "registeredBy": "admin"
+}
+Error Message: File too large
+Error Stack: MulterError: File too large
+    at abortWithCode (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/multer/lib/make-middleware.js:73:22)
+    at FileStream.<anonymous> (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/multer/lib/make-middleware.js:136:11)
+    at FileStream.emit (node:events:518:28)
+    at SBMH.ssCb [as _cb] (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/busboy/lib/types/multipart.js:479:32)
+    at feed (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/streamsearch/lib/sbmh.js:248:10)
+    at SBMH.push (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/streamsearch/lib/sbmh.js:104:16)
+    at Multipart._write (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/busboy/lib/types/multipart.js:567:19)
+    at writeOrBuffer (node:internal/streams/writable:564:12)
+    at _write (node:internal/streams/writable:493:10)
+    at Multipart.Writable.write (node:internal/streams/writable:502:10)
+--- END ERROR LOG ---
+
+stdout | test/ipfs/ipfs.service.test.ts > IPFS Service Tests > IM-002: Inmutabilidad de archivos en IPFS > Should maintain same CID for identical content
+CID consistente para contenido idéntico: QmUVmvRgBEawdWfsTq25ustrSzkmNkNpWjf9igqXLY6rQr
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Conectando al nodo IPFS local en: http://127.0.0.1:5001/api/v0
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Conectado al nodo IPFS local: { version: [32m'0.34.1'[39m, commit: [32m''[39m, repo: [32m'16'[39m }
+Servicio IPFS inicializado exitosamente
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m"<img src=x onerror=alert('XSS')>"[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Archivo subido a IPFS local, CID: QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7
+
+stdout | test/ipfs/ipfs.service.test.ts > IPFS Service Tests > IM-002: Inmutabilidad de archivos en IPFS > Should generate different CID for modified content
+CID original: QmYQ2M6acR9vgEFn5sQefW8LRvQnDz2UtbH4L5qzt7XNmS
+CID modificado: QmfKst1NQVd7iW7fxLcJaa3vAWos134obwKpoAQT1qRZJv
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject XSS in location field
+Transacción enviada: {
+  hash: [32m'0x1f8094ac85a45116b2b459c954508fa38c13cc79b781b8d6a7452935a5c0cfeb'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d4600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000203c696d67207372633d78206f6e6572726f723d616c657274282758535327293e000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Size Validation > Should accept files under 10MB
+Error al registrar multa en la blockchain: Error: nonce has already been used (transaction="0x02f902d3827a696d843b9aca00843b9acf3a8306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a0b0cd3e15b0d65d7b0d8aa8bf15798754cca19bb58555153c4cfac9c9df9d92d9a03b92d839180d6f73bed49db2550767d197d775fc7cba6a8d4dcc96b8f476ab6f", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1058:24[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'NONCE_EXPIRED'[39m,
+  transaction: [32m'0x02f902d3827a696d843b9aca00843b9acf3a8306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a0b0cd3e15b0d65d7b0d8aa8bf15798754cca19bb58555153c4cfac9c9df9d92d9a03b92d839180d6f73bed49db2550767d197d775fc7cba6a8d4dcc96b8f476ab6f'[39m,
+  info: {
+    error: {
+      code: [33m-32000[39m,
+      message: [32m"Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining."[39m,
+      data: [36m[Object][39m
+    }
+  },
+  shortMessage: [32m'nonce has already been used'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject HTML injection in registeredBy field
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject executable files
+Archivo subido a IPFS local, CID: QmSGKoeRcCM7h5NhTpo1XZKd3za1fAmeJGdeTeg8E154Sv
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject HTML injection in registeredBy field
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject HTML injection in registeredBy field
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject executable files
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject executable files
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmSGKoeRcCM7h5NhTpo1XZKd3za1fAmeJGdeTeg8E154Sv'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > XSS Prevention > Should reject HTML injection in registeredBy field
+Error al registrar multa en la blockchain: Error: nonce has already been used (transaction="0x02f902d3827a696d843b9aca00843b9acff28306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a06785438fbf425c40ac8b6dd54d40359607843821ac69fbcf0ab1561f9598deaaa02af9ce3165fda8e7a4f0263c1a97c221b09a40591e8021bde1e3cd6ba5908dfc", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1058:24[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'NONCE_EXPIRED'[39m,
+  transaction: [32m'0x02f902d3827a696d843b9aca00843b9acff28306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a06785438fbf425c40ac8b6dd54d40359607843821ac69fbcf0ab1561f9598deaaa02af9ce3165fda8e7a4f0263c1a97c221b09a40591e8021bde1e3cd6ba5908dfc'[39m,
+  info: {
+    error: {
+      code: [33m-32000[39m,
+      message: [32m"Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining."[39m,
+      data: [36m[Object][39m
+    }
+  },
+  shortMessage: [32m'nonce has already been used'[39m
+}
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > SQL Injection Prevention > Should reject SQL injection in plate number
+Error in RegisterFineUseCase: DomainException: Invalid plate number format. Expected format: ABC123 (3 letters + 3 numbers)
+    at PlateNumber.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:22:19[90m)[39m
+    at new PlateNumber [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:11:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:29:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:30:45[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject executable files
+Error al registrar multa en la blockchain: Error: nonce has already been used (transaction="0x02f902d3827a696d843b9aca00843b9acf3a8306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d53474b6f655263434d3768354e6854706f31585a4b64337a613166416d654a47646554656738453135345376000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a0c84a33c56f855a37b351b6d096a379b5b77fdddd4eeb54621d337c8577069d5fa016eb3f9c333ad0479b27dc05529eea2584e59d3824c43b26e013e9f3d4d08e86", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1058:24[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'NONCE_EXPIRED'[39m,
+  transaction: [32m'0x02f902d3827a696d843b9aca00843b9acf3a8306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d53474b6f655263434d3768354e6854706f31585a4b64337a613166416d654a47646554656738453135345376000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a0c84a33c56f855a37b351b6d096a379b5b77fdddd4eeb54621d337c8577069d5fa016eb3f9c333ad0479b27dc05529eea2584e59d3824c43b26e013e9f3d4d08e86'[39m,
+  info: {
+    error: {
+      code: [33m-32000[39m,
+      message: [32m"Nonce too low. Expected nonce to be 110 but got 109. Note that transactions can't be queued when automining."[39m,
+      data: [36m[Object][39m
+    }
+  },
+  shortMessage: [32m'nonce has already been used'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > SQL Injection Prevention > Should reject SQL injection in location
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > SQL Injection Prevention > Should reject SQL injection in location
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > SQL Injection Prevention > Should reject SQL injection in location
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m"1' OR '1'='1"[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject HTML files
+Archivo subido a IPFS local, CID: Qmb55bEQgdwdCiG5ziKibyeQmeMraCcZnEtmSjvuUQs7Fq
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject HTML files
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject HTML files
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'Qmb55bEQgdwdCiG5ziKibyeQmeMraCcZnEtmSjvuUQs7Fq'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > SQL Injection Prevention > Should reject SQL injection in location
+Transacción enviada: {
+  hash: [32m'0x7f00120915e4cd3a82f0b1402f2603dcfc82ccdb2e1e9571db092c95349483de'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c3127204f52202731273d27310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Path Traversal Prevention > Should reject path traversal in evidence CID
+--- ERROR LOG ---
+Timestamp: 2025-10-13T20:34:25.866Z
+Route: GET /api/etc/passwd
+Error Message: No se encontró /api/etc/passwd en este servidor
+Error Stack: Error: No se encontró /api/etc/passwd en este servidor
+    at /home/cristian-guzman/Proyectos/trabajo-grado/backend/src/app.ts:32:10
+    at Layer.handle [as handle_request] (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:149:13)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at Route.dispatch (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:119:3)
+--- END ERROR LOG ---
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Path Traversal Prevention > Should reject path traversal with encoded characters
+Error in GetFineEvidenceUseCase: DomainException: Invalid IPFS CID format. Expected CIDv0 (Qm...) or CIDv1 (b...)
+    at EvidenceCID.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:24:19[90m)[39m
+    at new EvidenceCID [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:12:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:31:16[90m)[39m
+    at GetFineEvidenceUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/GetFineEvidenceUseCase.ts:21:45[90m)[39m
+    at FineController.getFineEvidence [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:365:62[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:45:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at Route.dispatch [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:119:3[90m)[39m
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Input Length Validation > Should reject excessively long location string
+Error in RegisterFineUseCase: DomainException: Location address is too long (max 500 characters)
+    at Location.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Location.ts:22:19[90m)[39m
+    at new Location [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Location.ts:13:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Location.ts:46:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:31:39[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should reject HTML files
+Error al registrar multa en la blockchain: Error: nonce has already been used (transaction="0x02f902d3827a696e843b9aca00843b9ace988306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d62353562455167647764436947357a694b69627965516d654d726143635a6e45746d536a7675555173374671000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a045d2fae2815b890082cc1b40d5b3789e19669f8bb988e265e962d537b13adf23a018d9c2d38ef299bb0fd89a5bde83f41f9e8378b9f2753131264ac69200caa0b7", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 111 but got 110. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 111 but got 110. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1058:24[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'NONCE_EXPIRED'[39m,
+  transaction: [32m'0x02f902d3827a696e843b9aca00843b9ace988306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d62353562455167647764436947357a694b69627965516d654d726143635a6e45746d536a7675555173374671000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c001a045d2fae2815b890082cc1b40d5b3789e19669f8bb988e265e962d537b13adf23a018d9c2d38ef299bb0fd89a5bde83f41f9e8378b9f2753131264ac69200caa0b7'[39m,
+  info: {
+    error: {
+      code: [33m-32000[39m,
+      message: [32m"Nonce too low. Expected nonce to be 111 but got 110. Note that transactions can't be queued when automining."[39m,
+      data: [36m[Object][39m
+    }
+  },
+  shortMessage: [32m'nonce has already been used'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should accept valid image formats (JPEG)
+Archivo subido a IPFS local, CID: QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should accept valid image formats (JPEG)
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should accept valid image formats (JPEG)
+Iniciando registro de multa: {
+  plateNumber: [32m'DEF456'[39m,
+  evidenceCID: [32m'QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7'[39m,
+  location: [32m'Test Location 2'[39m,
+  infractionType: [32m'SEMAFORO_ROJO'[39m,
+  cost: [33m300000[39m,
+  ownerIdentifier: [32m'87654321'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Input Length Validation > Should reject excessively long owner identifier
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Input Length Validation > Should reject excessively long owner identifier
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Input Length Validation > Should reject excessively long owner identifier
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Type Validation > Should accept valid image formats (JPEG)
+Error al registrar multa en la blockchain: Error: nonce has already been used (transaction="0x02f902d3827a696e843b9aca00843b9ace988306e7db945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000493e00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064445463435360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f54657374204c6f636174696f6e20320000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d53454d41464f524f5f524f4a4f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000838373635343332310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c080a0ebe6b007659f4f9f28c7cdf122eafdd45f94c04a9a6656aa675e154f0a75b74aa01ab39347d0ef6e08ad70ad4e018f2927a2a2b7ccd2f69c65875c0e77becc1200", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 111 but got 110. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 111 but got 110. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1058:24[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'NONCE_EXPIRED'[39m,
+  transaction: [32m'0x02f902d3827a696e843b9aca00843b9ace988306e7db945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000493e00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064445463435360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f54657374204c6f636174696f6e20320000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d53454d41464f524f5f524f4a4f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000838373635343332310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c080a0ebe6b007659f4f9f28c7cdf122eafdd45f94c04a9a6656aa675e154f0a75b74aa01ab39347d0ef6e08ad70ad4e018f2927a2a2b7ccd2f69c65875c0e77becc1200'[39m,
+  info: {
+    error: {
+      code: [33m-32000[39m,
+      message: [32m"Nonce too low. Expected nonce to be 111 but got 110. Note that transactions can't be queued when automining."[39m,
+      data: [36m[Object][39m
+    }
+  },
+  shortMessage: [32m'nonce has already been used'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Input Length Validation > Should reject excessively long owner identifier
+Transacción enviada: {
+  hash: [32m'0xf9ba1a935c9be8a91a862a5862ba376d0db14f39ba86dd982e5e66da52d43cfc'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a120000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002a000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006431313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject negative cost values
+Error in RegisterFineUseCase: DomainException: Cost cannot be negative
+    at Cost.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:17:19[90m)[39m
+    at new Cost [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:12:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:30:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:33:31[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject extremely large cost values
+Error in RegisterFineUseCase: DomainException: Cost cannot exceed 100000000 COP
+    at Cost.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:21:19[90m)[39m
+    at new Cost [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:12:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:30:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:33:31[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject non-numeric cost values
+Error in RegisterFineUseCase: DomainException: Cost must be a finite number
+    at Cost.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:25:19[90m)[39m
+    at new Cost [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:12:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/Cost.ts:30:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:33:31[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > MIME Type Spoofing Prevention > Should validate actual file content, not just extension
+Archivo subido a IPFS local, CID: QmaJsH3goN1dcbWb2NXMit5LWxuEqUk25YRpwJKqPKiaUz
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Conectando al nodo IPFS local en: http://127.0.0.1:5001/api/v0
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > MIME Type Spoofing Prevention > Should validate actual file content, not just extension
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > MIME Type Spoofing Prevention > Should validate actual file content, not just extension
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmaJsH3goN1dcbWb2NXMit5LWxuEqUk25YRpwJKqPKiaUz'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Conectado al nodo IPFS local: { version: [32m'0.34.1'[39m, commit: [32m''[39m, repo: [32m'16'[39m }
+Servicio IPFS inicializado exitosamente
+
+stdout | test/ipfs/ipfs.service.test.ts > IPFS Service Tests > IM-002: Inmutabilidad de archivos en IPFS > Should demonstrate content-addressed nature of IPFS
+Demostración de naturaleza content-addressed: CID único Qmdvh2SRNfzfe9xhe5AdZFwhsdC5LZjcYX3bMLqZCuJsEt para contenido idéntico
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject zero cost value
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject zero cost value
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject zero cost value
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m0[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > MIME Type Spoofing Prevention > Should validate actual file content, not just extension
+Transacción enviada: {
+  hash: [32m'0x8734fd0672a6487c34e9ff022df717f3f6110e574c643a6e2b3cd35c0d6b1b64'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d614a734833676f4e316463625762324e584d6974354c5778754571556b3235595270774a4b71504b6961557a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > Multiple File Upload Prevention > Should reject multiple files in a single request
+--- ERROR LOG ---
+Timestamp: 2025-10-13T20:34:26.269Z
+Route: POST /api/fines
+Error Message: Unexpected field
+Error Stack: MulterError: Unexpected field
+    at wrappedFileFilter (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/multer/index.js:40:19)
+    at Multipart.<anonymous> (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/multer/lib/make-middleware.js:109:7)
+    at Multipart.emit (node:events:518:28)
+    at HeaderParser.cb (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/busboy/lib/types/multipart.js:358:14)
+    at HeaderParser.push (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/busboy/lib/types/multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/busboy/lib/types/multipart.js:394:37)
+    at feed (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/streamsearch/lib/sbmh.js:200:10)
+    at SBMH.push (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/streamsearch/lib/sbmh.js:104:16)
+    at Multipart._write (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/busboy/lib/types/multipart.js:567:19)
+    at writeOrBuffer (node:internal/streams/writable:564:12)
+--- END ERROR LOG ---
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Numeric Input Validation > Should reject zero cost value
+Error al registrar multa en la blockchain: Error: execution reverted: "Cost must be greater than zero" (action="estimateGas", data="0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001e436f7374206d7573742062652067726561746572207468616e207a65726f0000", reason="Cost must be greater than zero", transaction={ "data": "0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "to": "0x5FbDB2315678afecb367f032d93F642f64180aa3" }, invocation=null, revert={ "args": [ "Cost must be greater than zero" ], "name": "Error", "signature": "Error(string)" }, code=CALL_EXCEPTION, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at getBuiltinCallException [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/abi/abi-coder.ts:118:12[90m)[39m
+    at Function.getBuiltinCallException [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/abi/abi-coder.ts:235:16[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1016:32[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'CALL_EXCEPTION'[39m,
+  action: [32m'estimateGas'[39m,
+  data: [32m'0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001e436f7374206d7573742062652067726561746572207468616e207a65726f0000'[39m,
+  reason: [32m'Cost must be greater than zero'[39m,
+  transaction: {
+    to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+    data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m,
+    from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m
+  },
+  invocation: [1mnull[22m,
+  revert: {
+    signature: [32m'Error(string)'[39m,
+    name: [32m'Error'[39m,
+    args: [ [32m'Cost must be greater than zero'[39m ]
+  },
+  shortMessage: [32m'execution reverted: "Cost must be greater than zero"'[39m,
+  info: {
+    error: {
+      code: [33m-32603[39m,
+      message: [32m"Error: VM Exception while processing transaction: reverted with reason string 'Cost must be greater than zero'"[39m,
+      data: [36m[Object][39m
+    },
+    payload: {
+      method: [32m'eth_estimateGas'[39m,
+      params: [36m[Array][39m,
+      id: [33m68[39m,
+      jsonrpc: [32m'2.0'[39m
+    }
+  }
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Special Characters Validation > Should reject null bytes in input
+Error in RegisterFineUseCase: DomainException: Invalid plate number format. Expected format: ABC123 (3 letters + 3 numbers)
+    at PlateNumber.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:22:19[90m)[39m
+    at new PlateNumber [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:11:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:29:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:30:45[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+stderr | test/security/input-validation.test.ts > SEC-001: Input Validation Security Tests > Special Characters Validation > Should reject control characters in input
+Error in RegisterFineUseCase: DomainException: Invalid plate number format. Expected format: ABC123 (3 letters + 3 numbers)
+    at PlateNumber.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:22:19[90m)[39m
+    at new PlateNumber [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:11:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/PlateNumber.ts:29:16[90m)[39m
+    at RegisterFineUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/RegisterFineUseCase.ts:30:45[90m)[39m
+    at FineController.registerFine [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:54:59[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:27:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at done [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:47:7[90m)[39m
+    at indicateDone [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mmulter[24m/lib/make-middleware.js:51:68[90m)[39m
+
+ ✓ test/security/input-validation.test.ts (16 tests) 1150ms
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Av. Siempre Viva 123'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with special characters in names
+Archivo subido a IPFS local, CID: QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with special characters in names
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with special characters in names
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+Transacción enviada: {
+  hash: [32m'0xcd1fdd7c46ed997bd2eb7d4a5756da60c8e737fe076ed1e42e681c74a6d59800'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001441762e205369656d707265205669766120313233000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stderr | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with special characters in names
+Error al registrar multa en la blockchain: Error: nonce has already been used (transaction="0x02f902d3827a6970843b9aca00843b9ace0a8306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c080a0920c9605e723fc946fada5376ec16a64794aaf6d98f827bd2d17b6cf7b973c39a0606f064f66282e6663466976e72a5c3ae6b35c8c422c8b47a7e633ef30a904b6", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 114 but got 112. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 114 but got 112. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.14.4)
+    at makeError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/utils/errors.ts:698:21[90m)[39m
+    at JsonRpcProvider.getRpcError [90m(file:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:1058:24[90m)[39m
+    at [90mfile:///home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4methers[24m/src.ts/providers/provider-jsonrpc.ts:571:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m {
+  code: [32m'NONCE_EXPIRED'[39m,
+  transaction: [32m'0x02f902d3827a6970843b9aca00843b9ace0a8306a51b945fbdb2315678afecb367f032d93f642f64180aa380b9026482ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c080a0920c9605e723fc946fada5376ec16a64794aaf6d98f827bd2d17b6cf7b973c39a0606f064f66282e6663466976e72a5c3ae6b35c8c422c8b47a7e633ef30a904b6'[39m,
+  info: {
+    error: {
+      code: [33m-32000[39m,
+      message: [32m"Nonce too low. Expected nonce to be 114 but got 112. Note that transactions can't be queued when automining."[39m,
+      data: [36m[Object][39m
+    }
+  },
+  shortMessage: [32m'nonce has already been used'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully
+✅ Multa registrada exitosamente - ID: undefined, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with extremely long names
+Archivo subido a IPFS local, CID: QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with extremely long names
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with extremely long names
+Iniciando registro de multa: {
+  plateNumber: [32m'ABC123'[39m,
+  evidenceCID: [32m'QmP4Dhcmc3SyumxZ7p2fRKadQiiQ1Disa1we4uy9zUyBf7'[39m,
+  location: [32m'Test Location'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m500000[39m,
+  ownerIdentifier: [32m'12345678'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/ipfs/ipfs.service.test.ts > IPFS Service Tests > IPFS Integration Tests > Should demonstrate IPFS as immutable storage
+Evidencia original CID: QmQ1MvmjbUwwLsYFXXxv8nHzc4AKHYW1A5EaPkreN2hBK9
+Evidencia modificada CID: QmXs1G33tWGPoYLMSMpX4SYA1HqRoXBha8VCzMmagfg6pB
+✅ IPFS mantiene la inmutabilidad de las evidencias
+
+ ✓ test/ipfs/ipfs.service.test.ts (13 tests) 1886ms
+   ✓ IPFS Service Tests > IM-002: Inmutabilidad de archivos en IPFS > Should maintain data integrity across multiple operations  412ms
+stdout | test/security/file-upload.test.ts > SEC-002: File Upload Security Tests > File Name Sanitization > Should handle files with extremely long names
+Transacción enviada: {
+  hash: [32m'0xe5a3a9b09e1223e0cb12d51af967629126ff4f3db5b34b5cb9b64054c3a9fbfa'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000007a1200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064142433132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d50344468636d63335379756d785a37703266524b6164516969513144697361317765347579397a5579426637000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d54657374204c6f636174696f6e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831323334353637380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+ ✓ test/security/file-upload.test.ts (10 tests) 1513ms
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get all fines with pagination
+Total de multas en el sistema: 110
+Tamaño de página ajustado: [33m5[39m
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get all fines with pagination
+Multas obtenidas: [33m5[39m
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Iniciando registro de multa: {
+  plateNumber: [32m'XYZ789'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Calle Test 456'[39m,
+  infractionType: [32m'ESTACIONAMIENTO_PROHIBIDO'[39m,
+  cost: [33m300000[39m,
+  ownerIdentifier: [32m'87654321'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Transacción enviada: {
+  hash: [32m'0xe932ade0393eca70041fcbf85edda6b0c7f3bb3300d8fd8085461b73d1d47257'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000493e000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000240000000000000000000000000000000000000000000000000000000000000000658595a3738390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e43616c6c6520546573742034353600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000194553544143494f4e414d49454e544f5f50524f48494249444f00000000000000000000000000000000000000000000000000000000000000000000000000000838373635343332310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Obteniendo detalles de la multa: { fineId: [33m111[39m, type: [32m'number'[39m }
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Total de multas en el sistema: 111
+Llamando al contrato con ID: 111
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Respuesta del contrato: Result(11) [
+  [33m111n[39m,
+  [32m'XYZ789'[39m,
+  [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  [32m'Calle Test 456'[39m,
+  [33m1760387694n[39m,
+  [32m'ESTACIONAMIENTO_PROHIBIDO'[39m,
+  [33m300000n[39m,
+  [32m'87654321'[39m,
+  [33m0n[39m,
+  [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  [32m''[39m
+]
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get fines by plate number
+Fines encontradas por placa: []
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Iniciando registro de multa: {
+  plateNumber: [32m'STA123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Calle Status 789'[39m,
+  infractionType: [32m'SEMAFORO_ROJO'[39m,
+  cost: [33m400000[39m,
+  ownerIdentifier: [32m'11111111'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Transacción enviada: {
+  hash: [32m'0x914a35639103c178476c617a53b34ea70762727646bd484f2110cdd6e72660c0'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c00000000000000000000000000000000000000000000000000000000000061a800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000065354413132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001043616c6c65205374617475732037383900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d53454d41464f524f5f524f4a4f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000831313131313131310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Obteniendo detalles de la multa: { fineId: [33m112[39m, type: [32m'number'[39m }
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Total de multas en el sistema: 112
+Llamando al contrato con ID: 112
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Respuesta del contrato: Result(11) [
+  [33m112n[39m,
+  [32m'STA123'[39m,
+  [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  [32m'Calle Status 789'[39m,
+  [33m1760387696n[39m,
+  [32m'SEMAFORO_ROJO'[39m,
+  [33m400000n[39m,
+  [32m'11111111'[39m,
+  [33m0n[39m,
+  [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  [32m''[39m
+]
+
+stderr | test/api/fine.api.test.ts > Fine API Tests > API-002: Validaciones de datos > Should reject invalid status value
+Error in UpdateFineStatusUseCase: DomainException: Invalid fine state: 999. Must be one of: 0, 1, 2, 3, 4
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/FineState.ts:20:19[90m)[39m
+    at UpdateFineStatusUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/UpdateFineStatusUseCase.ts:23:42[90m)[39m
+    at FineController.updateFineStatus [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:108:63[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:33:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at Route.dispatch [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:119:3[90m)[39m
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/index.js:284:15
+    at param [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/index.js:365:14[90m)[39m
+
+stderr | test/api/fine.api.test.ts > Fine API Tests > API-002: Validaciones de datos > Should reject invalid IPFS CID format
+Error in GetFineEvidenceUseCase: DomainException: Invalid IPFS CID format. Expected CIDv0 (Qm...) or CIDv1 (b...)
+    at EvidenceCID.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:24:19[90m)[39m
+    at new EvidenceCID [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:12:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:31:16[90m)[39m
+    at GetFineEvidenceUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/GetFineEvidenceUseCase.ts:21:45[90m)[39m
+    at FineController.getFineEvidence [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:365:62[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:45:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at Route.dispatch [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:119:3[90m)[39m
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should register fine and verify blockchain integration
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should register fine and verify blockchain integration
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should register fine and verify blockchain integration
+Iniciando registro de multa: {
+  plateNumber: [32m'BLO123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Calle Blockchain 789'[39m,
+  infractionType: [32m'EXCESO_VELOCIDAD'[39m,
+  cost: [33m600000[39m,
+  ownerIdentifier: [32m'33333333'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should register fine and verify blockchain integration
+Transacción enviada: {
+  hash: [32m'0xeb66cec92984f14a2674ed5d7681ca2cabc789a3385fa3e848d90f904b7f5b52'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000927c0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000006424c4f3132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001443616c6c6520426c6f636b636861696e20373839000000000000000000000000000000000000000000000000000000000000000000000000000000000000001045584345534f5f56454c4f434944414400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000833333333333333330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should register fine and verify blockchain integration
+✅ Integración blockchain/IPFS verificada - ID: 113, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF, TX: 0xeb66cec92984f14a2674ed5d7681ca2cabc789a3385fa3e848d90f904b7f5b52
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Iniciando registro de multa: {
+  plateNumber: [32m'IPF123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Calle IPFS 456'[39m,
+  infractionType: [32m'ESTACIONAMIENTO_PROHIBIDO'[39m,
+  cost: [33m350000[39m,
+  ownerIdentifier: [32m'44444444'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Transacción enviada: {
+  hash: [32m'0x016352463c10db19e20ede16f8d0222bd7edcf7d39f5c46396ce83ee12556cc5'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000557300000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000064950463132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e43616c6c6520495046532034353600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000194553544143494f4e414d49454e544f5f50524f48494249444f00000000000000000000000000000000000000000000000000000000000000000000000000000834343434343434340000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Obteniendo archivo de IPFS con CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Chunk recibido, tamaño actual: 21 bytes
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+Archivo obtenido exitosamente del nodo local, tamaño total: [33m21[39m bytes
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID
+✅ Evidencia recuperada desde IPFS - CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF, Tamaño: 21 bytes
+
+stderr | test/api/fine.api.test.ts > Fine API Tests > API-003: Integración blockchain/IPFS > Should handle non-existent evidence CID
+Error in GetFineEvidenceUseCase: DomainException: Invalid IPFS CID format. Expected CIDv0 (Qm...) or CIDv1 (b...)
+    at EvidenceCID.validate [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:24:19[90m)[39m
+    at new EvidenceCID [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:12:14[90m)[39m
+    at Function.create [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/domain/value-objects/EvidenceCID.ts:31:16[90m)[39m
+    at GetFineEvidenceUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/GetFineEvidenceUseCase.ts:21:45[90m)[39m
+    at FineController.getFineEvidence [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:365:62[90m)[39m
+    at [90m/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/routes/fine.routes.ts:45:44
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+    at next [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:149:13[90m)[39m
+    at Route.dispatch [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/route.js:119:3[90m)[39m
+    at Layer.handle [as handle_request] [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39mnode_modules/[4mexpress[24m/lib/router/layer.js:95:5[90m)[39m
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Iniciando registro de multa: {
+  plateNumber: [32m'INT123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Calle Integrity 789'[39m,
+  infractionType: [32m'SEMAFORO_ROJO'[39m,
+  cost: [33m450000[39m,
+  ownerIdentifier: [32m'55555555'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Transacción enviada: {
+  hash: [32m'0xbcc83688b4403d3dfc45f5a5f1bff9310a9e2bac70bfac7c25093d6f8b0f4ade'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000006ddd0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000006494e543132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001343616c6c6520496e746567726974792037383900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d53454d41464f524f5f524f4a4f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000835353535353535350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Obteniendo detalles de la multa: { fineId: [33m115[39m, type: [32m'number'[39m }
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Total de multas en el sistema: 115
+Llamando al contrato con ID: 115
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Respuesta del contrato: Result(11) [
+  [33m115n[39m,
+  [32m'INT123'[39m,
+  [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  [32m'Calle Integrity 789'[39m,
+  [33m1760387713n[39m,
+  [32m'SEMAFORO_ROJO'[39m,
+  [33m450000n[39m,
+  [32m'55555555'[39m,
+  [33m0n[39m,
+  [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  [32m''[39m
+]
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Archivo subido a IPFS local, CID: QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Verificación del contrato exitosa: {
+  address: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  owner: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  code: [32m'0x608060405234801561001057600080fd5b50600436106101165760003560e01c...'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Iniciando registro de multa: {
+  plateNumber: [32m'IMM123'[39m,
+  evidenceCID: [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  location: [32m'Calle Immutable 456'[39m,
+  infractionType: [32m'OTRO'[39m,
+  cost: [33m550000[39m,
+  ownerIdentifier: [32m'66666666'[39m,
+  externalSystemId: [32m''[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Transacción enviada: {
+  hash: [32m'0xbdb9fd5c7d17bb120479caf4b004419708cb7e2803a3b55e6f3302bb1b16e199'[39m,
+  from: [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  to: [32m'0x5FbDB2315678afecb367f032d93F642f64180aa3'[39m,
+  data: [32m'0x82ca160600000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001c00000000000000000000000000000000000000000000000000000000000086470000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000006494d4d3132330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002e516d616468737970784b6d37623250327736623668555a617a664d3964486a76754d76734b6375737038654b4d46000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001343616c6c6520496d6d757461626c65203435360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044f54524f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000836363636363636360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'[39m
+}
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Obteniendo detalles de la multa: { fineId: [33m116[39m, type: [32m'number'[39m }
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Total de multas en el sistema: 116
+Llamando al contrato con ID: 116
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Respuesta del contrato: Result(11) [
+  [33m116n[39m,
+  [32m'IMM123'[39m,
+  [32m'QmadhsypxKm7b2P2w6b6hUZazfM9dHjvuMvsKcusp8eKMF'[39m,
+  [32m'Calle Immutable 456'[39m,
+  [33m1760387715n[39m,
+  [32m'OTRO'[39m,
+  [33m550000n[39m,
+  [32m'66666666'[39m,
+  [33m0n[39m,
+  [32m'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'[39m,
+  [32m''[39m
+]
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should handle integrity verification for non-existent fine
+Obteniendo detalles de la multa: { fineId: [33m999999[39m, type: [32m'number'[39m }
+
+stderr | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should handle integrity verification for non-existent fine
+Error fetching fine details from blockchain: Error: Fine ID 999999 does not exist. Total fines: 116
+    at BlockchainRepository.getFineDetails [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/fine/repositories/blockchain.repository.ts:176:23[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m
+    at EthereumBlockchainAdapter.getFineById [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/adapters/blockchain/EthereumBlockchainAdapter.ts:50:29[90m)[39m
+    at VerifyIntegrityUseCase.execute [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/application/use-cases/VerifyIntegrityUseCase.ts:24:32[90m)[39m
+    at FineController.verifyBlockchainIntegrity [90m(/home/cristian-guzman/Proyectos/trabajo-grado/backend/[39msrc/contexts/fines/infrastructure/http/controllers/FineController.ts:316:28[90m)[39m
+
+stdout | test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should handle integrity verification for non-existent fine
+Total de multas en el sistema: 116
+
+stderr | test/api/fine.api.test.ts > Fine API Tests > API Error Handling > Should handle server errors gracefully
+--- ERROR LOG ---
+Timestamp: 2025-10-13T20:34:51.959Z
+Route: GET /api/non-existent-endpoint
+Error Message: No se encontró /api/non-existent-endpoint en este servidor
+Error Stack: Error: No se encontró /api/non-existent-endpoint en este servidor
+    at /home/cristian-guzman/Proyectos/trabajo-grado/backend/src/app.ts:32:10
+    at Layer.handle [as handle_request] (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:149:13)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at next (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:145:7)
+    at Route.dispatch (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/express/lib/router/route.js:119:3)
+--- END ERROR LOG ---
+
+stderr | test/api/fine.api.test.ts > Fine API Tests > API Error Handling > Should handle malformed requests
+--- ERROR LOG ---
+Timestamp: 2025-10-13T20:34:52.970Z
+Route: POST /api/fines
+Error Message: Unexpected token 'i', "invalid json" is not valid JSON
+Error Stack: SyntaxError: Unexpected token 'i', "invalid json" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at createStrictSyntaxError (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/body-parser/lib/types/json.js:169:10)
+    at parse (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/body-parser/lib/types/json.js:86:15)
+    at /home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/body-parser/lib/read.js:128:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/raw-body/index.js:238:16)
+    at done (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/home/cristian-guzman/Proyectos/trabajo-grado/backend/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:518:28)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+--- END ERROR LOG ---
+
+ ❯ test/api/fine.api.test.ts (26 tests | 4 failed | 2 skipped) 27843ms
+   ✓ Fine API Tests > API-001: Endpoints de multas (CRUD) > Should register a new fine successfully  1310ms
+   ✓ Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get all fines with pagination  1052ms
+   × Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID 1220ms
+     → expected 200 "OK", got 400 "Bad Request"
+   ✓ Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get fines by plate number  1021ms
+   × Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully 1725ms
+     → expected 200 "OK", got 400 "Bad Request"
+   ↓ Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get fine status history
+   ↓ Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get recent fines history
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject fine registration without evidence file  1007ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject fine registration with missing required fields  1011ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject invalid fine ID format  1009ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject negative fine ID  1007ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject page=0 in pagination  1005ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject negative page numbers  1010ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject pageSize > 100  1006ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject pageSize = 0  1005ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject status update without required fields  1010ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject invalid status value  1013ms
+   ✓ Fine API Tests > API-002: Validaciones de datos > Should reject invalid IPFS CID format  1009ms
+   ✓ Fine API Tests > API-003: Integración blockchain/IPFS > Should register fine and verify blockchain integration  1216ms
+   ✓ Fine API Tests > API-003: Integración blockchain/IPFS > Should retrieve evidence from IPFS using CID  1692ms
+   ✓ Fine API Tests > API-003: Integración blockchain/IPFS > Should handle non-existent evidence CID  1005ms
+   × Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine 1733ms
+     → expected 200 "OK", got 400 "Bad Request"
+   × Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history 1735ms
+     → expected 200 "OK", got 400 "Bad Request"
+   ✓ Fine API Tests > IM-003: Verificación de historial blockchain > Should handle integrity verification for non-existent fine  1022ms
+   ✓ Fine API Tests > API Error Handling > Should handle server errors gracefully  1007ms
+   ✓ Fine API Tests > API Error Handling > Should handle malformed requests  1010ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should get a specific fine by ID
+Error: expected 200 "OK", got 400 "Bad Request"
+ ❯ test/api/fine.api.test.ts:134:18
+    132|             const response = await request(app)
+    133|                 .get(`/api/fines/${fineId}`)
+    134|                 .expect(200);
+       |                  ^
+    135| 
+    136|             expect(response.body.data).toHaveProperty("plateNumber", f…
+ ❯ Test._assertStatus node_modules/supertest/lib/test.js:267:14
+ ❯ node_modules/supertest/lib/test.js:323:13
+ ❯ Test._assertFunction node_modules/supertest/lib/test.js:300:13
+ ❯ Test.assert node_modules/supertest/lib/test.js:179:23
+ ❯ Server.localAssert node_modules/supertest/lib/test.js:135:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/api/fine.api.test.ts > Fine API Tests > API-001: Endpoints de multas (CRUD) > Should update fine status successfully
+Error: expected 200 "OK", got 400 "Bad Request"
+ ❯ test/api/fine.api.test.ts:196:18
+    194|                 .put(`/api/fines/${fineId}/status`)
+    195|                 .send(updateData)
+    196|                 .expect(200);
+       |                  ^
+    197| 
+    198|             expect(response.body).toHaveProperty("success", true);
+ ❯ Test._assertStatus node_modules/supertest/lib/test.js:267:14
+ ❯ node_modules/supertest/lib/test.js:323:13
+ ❯ Test._assertFunction node_modules/supertest/lib/test.js:300:13
+ ❯ Test.assert node_modules/supertest/lib/test.js:179:23
+ ❯ Server.localAssert node_modules/supertest/lib/test.js:135:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should verify blockchain integrity for existing fine
+Error: expected 200 "OK", got 400 "Bad Request"
+ ❯ test/api/fine.api.test.ts:499:18
+    497|             const response = await request(app)
+    498|                 .get(`/api/fines/${fineId}/integrity`)
+    499|                 .expect(200);
+       |                  ^
+    500| 
+    501|             expect(response.body).toHaveProperty("success", true);
+ ❯ Test._assertStatus node_modules/supertest/lib/test.js:267:14
+ ❯ node_modules/supertest/lib/test.js:323:13
+ ❯ Test._assertFunction node_modules/supertest/lib/test.js:300:13
+ ❯ Test.assert node_modules/supertest/lib/test.js:179:23
+ ❯ Server.localAssert node_modules/supertest/lib/test.js:135:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  test/api/fine.api.test.ts > Fine API Tests > IM-003: Verificación de historial blockchain > Should demonstrate immutable blockchain history
+Error: expected 200 "OK", got 400 "Bad Request"
+ ❯ test/api/fine.api.test.ts:551:22
+    549|                 const response = await request(app)
+    550|                     .get(`/api/fines/${fineId}/integrity`)
+    551|                     .expect(200);
+       |                      ^
+    552| 
+    553|                 integrityChecks.push({
+ ❯ Test._assertStatus node_modules/supertest/lib/test.js:267:14
+ ❯ node_modules/supertest/lib/test.js:323:13
+ ❯ Test._assertFunction node_modules/supertest/lib/test.js:300:13
+ ❯ Test.assert node_modules/supertest/lib/test.js:179:23
+ ❯ Server.localAssert node_modules/supertest/lib/test.js:135:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  4 failed | 74 passed | 2 skipped (80)
+   Start at  15:34:24
+   Duration  28.98s (transform 304ms, setup 0ms, collect 2.44s, tests 32.41s, environment 1ms, prepare 414ms)
+
