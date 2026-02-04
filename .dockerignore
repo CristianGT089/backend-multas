@@ -1,0 +1,60 @@
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+*.tsbuildinfo
+
+# Hardhat artifacts
+cache
+artifacts/build-info
+
+# TypeChain
+typechain-types
+
+# Tests
+test
+coverage
+*.test.ts
+*.test.js
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+
+# Documentation
+*.md
+!README.md
+
+# Other
+.editorconfig
+.prettierrc
+.eslintrc
