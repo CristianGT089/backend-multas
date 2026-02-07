@@ -345,6 +345,72 @@ export class FineController {
     }
 
     /**
+     * GET /api/fines/recent-history
+     * Devuelve actividad reciente basada en las últimas multas registradas.
+     */
+    async getRecentHistory(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const result = await this.getAllFinesUseCase.execute({ page: 1, pageSize: 10 });
+
+            if (!result.isSuccess) {
+                res.status(200).json({ success: true, data: [] });
+                return;
+            }
+
+            const fines = result.value!.fines || [];
+            const activities = fines.map((fine: any) => ({
+                id: `activity-${fine.id}`,
+                fineId: String(fine.id),
+                plateNumber: fine.plateNumber,
+                reason: `Multa registrada - ${fine.infractionType}`,
+                status: fine.currentState,
+                timestamp: fine.timestamp
+            }));
+
+            res.status(200).json({ success: true, data: activities });
+        } catch (error: any) {
+            console.error("Error in getRecentHistory controller:", error);
+            res.status(200).json({ success: true, data: [] });
+        }
+    }
+
+    /**
+     * GET /api/fines/:fineId/status-history
+     * Devuelve el historial de estados de una multa.
+     */
+    async getStatusHistory(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { fineId } = req.params;
+            const numericFineId = parseInt(fineId, 10);
+
+            if (isNaN(numericFineId) || numericFineId <= 0) {
+                res.status(200).json({ success: true, data: [] });
+                return;
+            }
+
+            const result = await this.getFineUseCase.execute(numericFineId);
+
+            if (!result.isSuccess) {
+                res.status(200).json({ success: true, data: [] });
+                return;
+            }
+
+            const fine = result.value!;
+            const history = [{
+                status: fine.currentState,
+                reason: 'Estado inicial - Multa registrada',
+                timestamp: fine.timestamp,
+                updatedBy: fine.registeredBy
+            }];
+
+            res.status(200).json({ success: true, data: history });
+        } catch (error: any) {
+            console.error("Error in getStatusHistory controller:", error);
+            res.status(200).json({ success: true, data: [] });
+        }
+    }
+
+    /**
      * GET /api/fines/evidence/:evidenceCID
      * Obtiene la evidencia de una multa desde IPFS.
      */

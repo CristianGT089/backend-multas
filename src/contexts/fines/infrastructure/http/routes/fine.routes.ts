@@ -39,6 +39,12 @@ export function configureFineRoutes(): Router {
         (req, res, next) => fineController.getFines(req, res, next)
     );
 
+    // GET - Historial de actividad reciente
+    router.get(
+        '/recent-history',
+        (req, res, next) => fineController.getRecentHistory(req, res, next)
+    );
+
     // GET - Obtener evidencia por CID
     router.get(
         '/evidence/:evidenceCID',
@@ -49,6 +55,12 @@ export function configureFineRoutes(): Router {
     router.get(
         '/plate/:plateNumber',
         (req, res, next) => fineController.getFinesByPlate(req, res, next)
+    );
+
+    // GET - Historial de estados de una multa
+    router.get(
+        '/:fineId/status-history',
+        (req, res, next) => fineController.getStatusHistory(req, res, next)
     );
 
     // GET - Verificar integridad (ambas rutas apuntan al mismo método)
