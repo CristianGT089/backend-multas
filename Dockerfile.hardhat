@@ -1,0 +1,36 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json ./
+COPY hardhat.config.cjs ./
+
+RUN npm install
+
+COPY contracts ./contracts
+COPY scripts ./scripts
+
+RUN npm run build:contracts
+
+EXPOSE 8545
+
+# Script que inicia Hardhat y luego despliega el contrato
+COPY <<'EOF' /app/start.sh
+#!/bin/sh
+echo "Iniciando nodo de Hardhat..."
+npx hardhat node &
+HARDHAT_PID=$!
+
+echo "Esperando a que Hardhat esté listo..."
+sleep 5
+
+echo "Desplegando contrato..."
+npx hardhat run scripts/deploy.mjs --network localhost 2>&1 | tee deployment.log
+
+echo "Contrato desplegado. Hardhat corriendo en el PID $HARDHAT_PID"
+wait $HARDHAT_PID
+EOF
+
+RUN chmod +x /app/start.sh
+
+CMD ["/app/start.sh"]

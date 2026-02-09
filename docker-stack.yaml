@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  ipfs:
+    image: fotomultas/ipfs:latest
+    ports:
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
+    networks:
+      - backend-blockchain
+  hardhat:
+    image: fotomultas/hardhat:latest
+    ports:
+      - "8545:8545"
+    networks:
+      - backend-blockchain
+    depends_on:
+      - ipfs
+  backend:
+    image: fotomultas/backend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_RPC_URL=http://hardhat:8545
+      - CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
+      - ETHEREUM_CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
+      - IPFS_API_URL=http://ipfs:5001
+      - IPFS_GATEWAY_URL=http://ipfs:8080
+    networks:
+      - backend-blockchain
+    depends_on:
+      - hardhat
+      - ipfs
+  frontend:
+    image: fotomultas/frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - backend-blockchain
+volumes:
+  ipfs_data:
+networks:
+  backend-blockchain:
+    driver: overlay
+    external: true

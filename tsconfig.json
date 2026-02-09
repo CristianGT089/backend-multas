@@ -27,10 +27,7 @@
   },
   "include": [
     "src/**/*",
-    "scripts/**/*",
-    "test/config/**/*",
-    "test/fine/**/*",
-    "test/integration/**/*"
+    "clients/**/*"
   ],
   "exclude": [
     "node_modules",

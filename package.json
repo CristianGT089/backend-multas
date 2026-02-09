@@ -2,10 +2,10 @@
   "name": "fotomultas-backend",
   "version": "1.0.0",
   "description": "Backend unificado para sistema de fotomultas con Smart Contracts, IPFS y API REST",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "dev": "tsx watch src/server.ts",
     "dev:contracts": "hardhat node",
     "build": "tsc",
