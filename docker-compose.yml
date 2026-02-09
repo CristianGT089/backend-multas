@@ -4,7 +4,7 @@ services:
   ipfs:
     image: fotomultas/ipfs:latest
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile.ipfs
     ports:
       - "5001:5001"
@@ -16,7 +16,7 @@ services:
   hardhat:
     image: fotomultas/hardhat:latest
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile.hardhat
     ports:
       - "8545:8545"
@@ -27,7 +27,7 @@ services:
   backend:
     image: fotomultas/backend:latest
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -42,7 +42,17 @@ services:
     depends_on:
       - hardhat
       - ipfs
-
+  frontend:
+    image: fotomultas/frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - fotomultas-backend
 volumes:
   ipfs_data:
 
