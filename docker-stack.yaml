@@ -54,12 +54,12 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=reverse_proxy"
-        - "traefik.http.routers.glud-website.entrypoints=websecure"
-        - "traefik.http.routers.moodle.tls.certresolver=production"
-        - "traefik.http.routers.glud-website.rule=Host(`fotomultas-backend.glud.org`)"
-        - "traefik.http.routers.glud-website.service=fotomultas-backend"
-        - "traefik.http.routers.glud-website.tls=true"
-        - "traefik.http.services.glud-website.loadbalancer.server.port=3000"
+        - "traefik.http.routers.fotomultas-backend.entrypoints=websecure"
+        - "traefik.http.routers.fotomultas-backend.tls.certresolver=production"
+        - "traefik.http.routers.fotomultas-backend.rule=Host(`fotomultas-backend.glud.org`)"
+        - "traefik.http.routers.fotomultas-backend.service=fotomultas-backend"
+        - "traefik.http.routers.fotomultas-backend.tls=true"
+        - "traefik.http.services.fotomultas-backend.loadbalancer.server.port=3000"
   frontend:
     image: fotomultas/frontend:latest
     depends_on:
@@ -78,12 +78,12 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=reverse_proxy"
-        - "traefik.http.routers.glud-frontend.entrypoints=websecure"
-        - "traefik.http.routers.moodle.tls.certresolver=production"
-        - "traefik.http.routers.glud-frontend.rule=Host(`fotomultas.glud.org`)"
-        - "traefik.http.routers.glud-frontend.service=fotomultas-frontend"
-        - "traefik.http.routers.glud-frontend.tls=true"
-        - "traefik.http.services.glud-frontend.loadbalancer.server.port=80"
+        - "traefik.http.routers.fotomultas-frontend.entrypoints=websecure"
+        - "traefik.http.routers.fotomultas-frontend.tls.certresolver=production"
+        - "traefik.http.routers.fotomultas-frontend.rule=Host(`fotomultas.glud.org`)"
+        - "traefik.http.routers.fotomultas-frontend.service=fotomultas-frontend"
+        - "traefik.http.routers.fotomultas-frontend.tls=true"
+        - "traefik.http.services.fotomultas-frontend.loadbalancer.server.port=80"
 volumes:
   ipfs_data:
 networks:
