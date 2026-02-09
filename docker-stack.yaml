@@ -39,6 +39,7 @@ services:
       - IPFS_GATEWAY_URL=http://ipfs:8080
     networks:
       - backend-blockchain
+      - reverse_proxy
     depends_on:
       - hardhat
       - ipfs
@@ -65,6 +66,7 @@ services:
       - backend
     networks:
       - backend-blockchain
+      - reverse_proxy
     deploy:
       replicas: 1
       restart_policy:
@@ -86,5 +88,8 @@ volumes:
   ipfs_data:
 networks:
   backend-blockchain:
+    driver: overlay
+    external: true
+  reverse_proxy:
     driver: overlay
     external: true
