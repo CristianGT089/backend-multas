@@ -7,6 +7,8 @@ import type { IGetAllFinesUseCase } from '../../../domain/ports/input/IGetAllFin
 import type { IGetFinesByPlateUseCase } from '../../../domain/ports/input/IGetFinesByPlateUseCase.js';
 import type { IVerifyIntegrityUseCase } from '../../../domain/ports/input/IVerifyIntegrityUseCase.js';
 import type { IGetFineEvidenceUseCase } from '../../../domain/ports/input/IGetFineEvidenceUseCase.js';
+import type { IBlockchainPort } from '../../../domain/ports/output/IBlockchainPort.js';
+import { FineId } from '../../../domain/value-objects/FineId.js';
 
 /**
  * Controller HTTP para el contexto de Multas
@@ -21,7 +23,8 @@ export class FineController {
         @inject('IGetAllFinesUseCase') private readonly getAllFinesUseCase: IGetAllFinesUseCase,
         @inject('IGetFinesByPlateUseCase') private readonly getFinesByPlateUseCase: IGetFinesByPlateUseCase,
         @inject('IVerifyIntegrityUseCase') private readonly verifyIntegrityUseCase: IVerifyIntegrityUseCase,
-        @inject('IGetFineEvidenceUseCase') private readonly getFineEvidenceUseCase: IGetFineEvidenceUseCase
+        @inject('IGetFineEvidenceUseCase') private readonly getFineEvidenceUseCase: IGetFineEvidenceUseCase,
+        @inject('IBlockchainPort') private readonly blockchainPort: IBlockchainPort
     ) {}
 
     /**
@@ -388,20 +391,21 @@ export class FineController {
                 return;
             }
 
-            const result = await this.getFineUseCase.execute(numericFineId);
+            const fineIdVO = FineId.create(numericFineId);
+            const result = await this.blockchainPort.getFineStatusHistory(fineIdVO);
 
             if (!result.isSuccess) {
                 res.status(200).json({ success: true, data: [] });
                 return;
             }
 
-            const fine = result.value!;
-            const history = [{
-                status: fine.currentState,
-                reason: 'Estado inicial - Multa registrada',
-                timestamp: fine.timestamp,
-                updatedBy: fine.registeredBy
-            }];
+            const history = result.value!.map(entry => ({
+                oldState: entry.oldState,
+                newState: entry.newState,
+                reason: entry.reason,
+                updatedBy: entry.updatedBy,
+                timestamp: entry.timestamp
+            }));
 
             res.status(200).json({ success: true, data: history });
         } catch (error: any) {
